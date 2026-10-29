@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Voices from the Land</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: field-notebook tool. Header + tabs; producers view = map beside an accordion list; schedule = month grid; brief = reference sheet. */
+:root{
+  --bg:#F1F2EC; --surface:#FFFFFF; --surface-2:#F7F8F3; --ink:#1D2320; --muted:#5D665F; --line:#D8DCD1; --line-2:#E6E9E0;
+  --accent:#2F5D3A; --accent-ink:#FFFFFF; --accent-soft:#E2EBDD;
+  --sea:#DCE7EA; --land:#E9E4D3; --land-line:#B8B095; --city:#7A7F74;
+  --s-todo:#8B918A; --s-prog:#B7791F; --s-book:#2F6690; --s-done:#2F7D4A; --s-bad:#B23A2E;
+  --s-todo-bg:#ECEDE8; --s-prog-bg:#F7ECD8; --s-book-bg:#DDE9F2; --s-done-bg:#DDEFE2; --s-bad-bg:#F5DEDA;
+  --f-display:"Young Serif", Georgia, "Times New Roman", serif;
+  --f-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --r:10px; --pink:#EC6FA8; --lime:#A6D63C; --badge-ink:#1A1F14;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#151A17; --surface:#1D2420; --surface-2:#222A25; --ink:#E7EAE3; --muted:#A3ACA4; --line:#36403A; --line-2:#2C3530;
+  --accent:#8CC79A; --accent-ink:#10170F; --accent-soft:#2A3A2E;
+  --sea:#17262B; --land:#2E3329; --land-line:#5B6150; --city:#9AA096;
+  --s-todo:#9AA19A; --s-prog:#E0A94F; --s-book:#7FB3DB; --s-done:#7CC994; --s-bad:#E58A7F;
+  --s-todo-bg:#2A302C; --s-prog-bg:#3A2F1C; --s-book-bg:#1D3040; --s-done-bg:#1E3626; --s-bad-bg:#3F2522;
+  --pink:#F28CBF; --lime:#B5E255;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#151A17; --surface:#1D2420; --surface-2:#222A25; --ink:#E7EAE3; --muted:#A3ACA4; --line:#36403A; --line-2:#2C3530;
+  --accent:#8CC79A; --accent-ink:#10170F; --accent-soft:#2A3A2E;
+  --sea:#17262B; --land:#2E3329; --land-line:#5B6150; --city:#9AA096;
+  --s-todo:#9AA19A; --s-prog:#E0A94F; --s-book:#7FB3DB; --s-done:#7CC994; --s-bad:#E58A7F;
+  --s-todo-bg:#2A302C; --s-prog-bg:#3A2F1C; --s-book-bg:#1D3040; --s-done-bg:#1E3626; --s-bad-bg:#3F2522;
+  --pink:#F28CBF; --lime:#B5E255;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+h1,h2,h3{text-wrap:balance;margin:0}
+.eyebrow{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header.top{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:end;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid var(--line)}
+header.top h1{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,4vw,40px);line-height:1.1;margin-top:4px}
+.stats{display:flex;flex-wrap:wrap;gap:8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stat b{font-weight:700}
+nav.tabs{display:flex;gap:4px;margin:16px 0 18px;flex-wrap:wrap}
+nav.tabs a{font-weight:600;font-size:14px;color:var(--muted);text-decoration:none;padding:8px 14px;border-radius:999px;border:1px solid transparent}
+nav.tabs a[aria-current="page"]{color:var(--accent-ink);background:var(--accent)}
+nav.tabs a:not([aria-current="page"]):hover{border-color:var(--line);color:var(--ink)}
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.banner{background:var(--s-prog-bg);color:var(--ink);border-radius:var(--r);padding:10px 14px;font-size:13.5px;margin-bottom:14px}
+.view[hidden]{display:none!important}
+
+/* producers view */
+.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:20px;align-items:start}
+@media (max-width:900px){.split{grid-template-columns:minmax(0,1fr)}}
+.mapcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+@media (max-width:900px){.mapcard{position:static}}
+.mapcard svg{display:block;width:100%;height:auto;border-radius:6px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);margin-top:10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.pin{cursor:pointer}
+.pin:focus{outline:none}
+.pin:focus-visible circle.badge{stroke:var(--accent);stroke-width:3}
+.maptext{font-family:var(--f-body);fill:var(--ink)}
+.list{display:flex;flex-direction:column;gap:8px;min-width:0}
+.row{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);min-width:0}
+.row.open{border-color:var(--accent)}
+.row{position:relative}
+.row-head .num{position:relative;z-index:1}
+.row.link-next{z-index:2}
+.row.link-next::after{content:"";position:absolute;left:26px;top:44px;bottom:-24px;border-left:4px solid var(--accent);border-radius:2px;z-index:0;pointer-events:none}
+.row.link-next + .row .row-head .num{box-shadow:0 0 0 3px var(--accent)}
+.row.link-next .row-head .num{box-shadow:0 0 0 3px var(--accent)}
+.row-head{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:start;padding:12px 14px;cursor:pointer;border-radius:var(--r)}
+.num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;color:var(--badge-ink);background:var(--lime);font-variant-numeric:tabular-nums}
+.rname{min-width:0}
+.rname strong{display:block;font-size:15.5px;font-weight:600}
+.rname small{display:block;color:var(--muted);font-size:12.5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;align-items:center}
+.crops{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12.5px;color:var(--ink);margin-top:3px}
+.crops span{white-space:nowrap}
+.emo{font-size:15px;line-height:1}
+.row-head .num{grid-row:1 / span 2;margin-top:2px}
+.chips{grid-column:2;justify-content:flex-start!important}
+.pill{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap;line-height:1.4;display:inline-flex;align-items:center;gap:4px;background:var(--s-todo-bg);color:var(--s-todo)}
+.pill.todo{background:var(--s-todo-bg);color:var(--ink)} .pill.prog{background:var(--s-prog-bg);color:var(--ink)} .pill.book{background:var(--s-book-bg);color:var(--ink)} .pill.done{background:var(--s-done-bg);color:var(--ink)} .pill.bad{background:var(--s-bad-bg);color:var(--ink)}
+.pill .dot{width:7px;height:7px;margin-right:5px;vertical-align:1px}
+.pill.animal{background:var(--surface);border:1px solid var(--s-prog);color:var(--ink)}
+.pill.dayp{background:transparent;border:1px solid var(--line);color:var(--muted);font-family:var(--f-mono);font-weight:500}
+.row-body{border-top:1px solid var(--line-2);padding:0 14px 16px}
+.itabs{display:flex;gap:2px;overflow-x:auto;padding:10px 0 12px;scrollbar-width:thin}
+.itabs button{all:unset;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);padding:6px 10px;border-radius:6px;white-space:nowrap}
+.itabs button[aria-selected="true"]{background:var(--accent-soft);color:var(--ink)}
+.itabs button:focus-visible{outline:2px solid var(--accent)}
+.panel h4{font-size:12px;font-family:var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:16px 0 6px;font-weight:500}
+.panel h4:first-child{margin-top:4px}
+.panel p{margin:0 0 8px;max-width:68ch}
+.panel ul,.panel ol{margin:0 0 8px;padding-left:20px;max-width:70ch}
+.panel li{margin-bottom:5px}
+.panel ol.q li{margin-bottom:7px}
+.panel ol.q li::marker{color:var(--muted);font-family:var(--f-mono);font-size:12px}
+.qgroup{font-weight:600;font-size:13px;margin:12px 0 4px;color:var(--accent)}
+.callout{background:var(--surface-2);border:1px solid var(--line-2);border-radius:8px;padding:10px 12px;margin:8px 0}
+.callout.warn{background:var(--s-bad-bg);border-color:transparent}
+.callout.good{background:var(--s-done-bg);border-color:transparent}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
+.tag{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:var(--muted)}
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px}
+@media (max-width:560px){.form{grid-template-columns:minmax(0,1fr)}}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field.wide{grid-column:1/-1}
+.field label{font-size:12px;font-weight:600;color:var(--muted)}
+input,select,textarea{font:inherit;font-size:14px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:7px 9px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:70px;line-height:1.45}
+input:disabled,select:disabled,textarea:disabled{opacity:.7}
+.saved{font-size:12px;color:var(--muted);margin-top:8px;min-height:18px}
+.btn{all:unset;cursor:pointer;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.btn:hover{border-color:var(--accent)}
+.btn:focus-visible{outline:2px solid var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 2px}
+
+/* schedule */
+.cal-wrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}
+@media (max-width:900px){.cal-wrap{grid-template-columns:minmax(0,1fr)}}
+.cal{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px}
+.cal-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.cal-head h2{font-family:var(--f-display);font-weight:400;font-size:24px}
+.grid7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.dow{font-family:var(--f-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:2px 4px}
+.day{all:unset;box-sizing:border-box;min-height:92px;border:1px solid var(--line-2);border-radius:7px;padding:5px;display:flex;flex-direction:column;gap:3px;cursor:pointer;background:var(--surface);min-width:0}
+.day:hover{border-color:var(--accent)}
+.day:focus-visible{outline:2px solid var(--accent)}
+.day.out{opacity:.4}
+.day.we{background:var(--surface-2)}
+.day.today .dn{background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:0 6px}
+.day.sel{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.dn{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;align-self:flex-start}
+.hol{font-size:10px;color:var(--s-bad);line-height:1.2}
+.ev{font-size:11px;line-height:1.25;border-radius:4px;padding:2px 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev.shoot{background:var(--s-book-bg)} .ev.call{background:var(--s-prog-bg)} .ev.due{background:transparent;border:1px dashed var(--s-bad)}
+@media (max-width:560px){.day{min-height:64px;padding:3px}.ev{font-size:9.5px;padding:1px 3px}.ev .evn{display:none}}
+.side{display:flex;flex-direction:column;gap:12px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.box h3{font-size:15px;font-weight:700;margin-bottom:8px}
+.box .small{font-size:12.5px;color:var(--muted)}
+.unsched{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.unsched li{display:flex;gap:8px;align-items:center;font-size:13.5px}
+
+/* brief */
+.brief{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:900px){.brief{grid-template-columns:minmax(0,1fr)}}
+.brief .box.wide{grid-column:1/-1}
+.brief .box p,.brief .box li{max-width:72ch}
+.brief ol,.brief ul{padding-left:20px;margin:0}
+.brief li{margin-bottom:6px}
+.matrix{overflow-x:auto}
+.matrix table{border-collapse:collapse;font-size:12.5px;min-width:720px;width:100%}
+.matrix th,.matrix td{border-bottom:1px solid var(--line-2);padding:6px 6px;text-align:center}
+.matrix th:first-child,.matrix td:first-child{text-align:left;white-space:nowrap}
+.matrix thead th{font-weight:600;vertical-align:bottom;font-size:11.5px;color:var(--muted)}
+.matrix td.y{color:var(--accent);font-size:15px}
+.matrix tfoot td{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.matrix tfoot td.thin{color:var(--s-bad);font-weight:600}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">FARM WISELY · NEW CAP 2026 · IMH × Kaimakki</div>
+      <h1>Voices from the Land</h1>
+    </div>
+    <div class="stats" id="stats" aria-live="polite"></div>
+  </header>
+  <nav class="tabs" aria-label="Views">
+    <a href="#producers" data-view="producers">🗺️ Producers</a>
+    <a href="#schedule" data-view="schedule">📅 Schedule</a>
+    <a href="#brief" data-view="brief">📋 Brief &amp; client checklist</a>
+  </nav>
+  <div id="banner" class="banner" hidden></div>
+
+  <section class="view" id="v-producers">
+    <div class="split">
+      <div class="mapcard">
+        <div id="map"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="list" id="list"></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-schedule" hidden>
+    <div class="cal-wrap">
+      <div class="cal">
+        <div class="cal-head">
+          <button class="btn" id="prevM" aria-label="Previous month">←</button>
+          <h2 id="calTitle"></h2>
+          <button class="btn" id="nextM" aria-label="Next month">→</button>
+        </div>
+        <div class="grid7" id="calGrid"></div>
+      </div>
+      <div class="side">
+        <div class="box" id="dayBox">
+          <h3 id="dayTitle">Pick a day</h3>
+          <p class="small" id="dayHint">Click any day on the calendar to book a call or a shoot on it.</p>
+          <div id="dayForm" hidden>
+            <div class="form" style="grid-template-columns:minmax(0,1fr)">
+              <div class="field"><label for="dfWhat">What</label>
+                <select id="dfWhat"><option value="shootDate">Shoot</option><option value="callDate">Pre-production call</option></select></div>
+              <div class="field"><label for="dfWho">Producer</label><select id="dfWho"></select></div>
+              <div class="field"><label for="dfTime">Time (optional)</label><input id="dfTime" placeholder="e.g. 07:30"></div>
+            </div>
+            <div class="tools"><button class="btn primary" id="dfSave">Book it</button></div>
+            <div id="dayEvents"></div>
+          </div>
+          <div class="saved" id="calSaved"></div>
+        </div>
+        <div class="box">
+          <h3>🫒 Recommended shoot order</h3>
+          <p class="small" style="margin:0 0 8px">Sorted by what each farm looks like right now. Confirm harvest dates on each call.</p>
+          <ol class="small" style="padding-left:18px;margin:0;display:flex;flex-direction:column;gap:6px">
+            <li><b>Day 1 · Περβόλι + Planty</b> · ⏰ film by Fri 6 Nov. Coastal olives are picked first, and milling fresh oil is the money shot. Planty is indoors, so it rides along.</li>
+            <li><b>Day 2 · Ygea + ALION</b> · ⏰ film by Fri 13 Nov. Olive harvest and hens at Ygea. ALION works any time.</li>
+            <li><b>Day 3 · Akaki Grove</b> · ⏰ film by Fri 13 Nov, while the olives are on the trees. Early citrus may be colouring too.</li>
+            <li><b>Day 4 · Mountain Berries</b> · ⏰ film by Fri 20 Nov. The last autumn colour and any late raspberries go with the first frosts at 1,300 m. If nothing is left, film the people and landscape and get summer footage, or move to May to June.</li>
+            <li><b>Day 5 · Όρος Μαχαιρά</b> · ⏰ film by Fri 27 Nov. Carob flowers in autumn keep bees foraging on warm days. Book a still, sunny day around midday, before December cold.</li>
+            <li><b>Day 6 · Α/φοί Ανδρέου</b> · ⏰ film by Fri 4 Dec. No season. Last for biosecurity, and it gives time to confirm the CAP link with IMH.</li>
+          </ol>
+        </div>
+        <div class="box">
+          <h3>⏳ Still to schedule</h3>
+          <ul class="unsched" id="unsched"></ul>
+        </div>
+        <div class="box">
+          <h3>📝 Planning notes</h3>
+          <ul class="small" style="padding-left:18px;margin:0">
+            <li>Pairs that share a day: <b>1 + 2</b> (Μαρώνι, Ψεματισμένος, 2 km apart) and <b>3 + 4</b> (Μαθιάτης, Πέρα Χωριό). Linked with a green line on the map and list.</li>
+            <li>Keep a rain day free each week. Olive picking stops in the wet.</li>
+            <li>Weekend shoots cost extra (€100 for 2 hours, €50 per hour after).</li>
+            <li>Book early morning or late afternoon for the light. Sunset is around 16:40 in late November.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="v-brief" hidden>
+    <div class="brief" id="briefBody"></div>
+  </section>
+</div>
+
+<script>
+const SNAPSHOT = {"p1": {"callDate": "", "capDetail": "No CAP support found online. The research partnership (3PRO-TROODOS) was ERDF-funded via the Research and Innovation Foundation, not CAP. Ask about young farmer support (6.1) or investment (4.1) for nets and irrigation.", "capStatus": "Unconfirmed", "contactPerson": "Νικόλας Βαλανίδης", "email": "mountainberriespitsilia@gmail.com (unconfirmed: the research doc had a typo)", "filmBy": "2026-11-20", "notes": "", "phone": "99 051161", "shootDate": "", "shootDay": "4", "shootTime": "", "status": "To contact"}, "p2": {"callDate": "", "capDetail": "None found online. He has said EU programmes helped with funding and knowledge. Ask: organic payments, 4.1 investment, or advisory support?", "capStatus": "Unconfirmed", "contactPerson": "Χάρης Χριστοφόρου", "email": "", "filmBy": "2026-11-06", "notes": "", "phone": "99 463522", "shootDate": "", "shootDay": "1", "shootTime": "", "status": "To contact"}, "p3": {"callDate": "", "capDetail": "RDP 2014-2020, M04 Investments in physical assets. Total €1,026,722: EAFRD €318,000, national €282,000, private €426,722. Applied Dec 2015, approved Nov 2017, launched Sept 2019. Source: EU CAP Network good practice page. Still to confirm: 4.1 or 4.2.", "capStatus": "Confirmed", "contactPerson": "Λοΐζος Τόφας (co-founder)", "email": "loizos@planty.eu", "filmBy": "2026-11-06", "notes": "", "phone": "24 000240", "shootDate": "", "shootDay": "1", "shootTime": "", "status": "To contact"}, "p4": {"callDate": "", "capDetail": "Website says it met EAFRD requirements and took part in EU infrastructure projects. No measure named. Ask which measure paid for what (4.1? organic payments?).", "capStatus": "Partial", "contactPerson": "Γιώργος Κωνσταντινίδης (founder), son Ορέστης", "email": "organic@ygea.farm", "filmBy": "2026-11-13", "notes": "", "phone": "99 417049", "shootDate": "", "shootDay": "2", "shootTime": "", "status": "To contact"}, "p5": {"callDate": "", "capDetail": "None found online. Ask about young farmer aid, organic or eco-scheme payments.", "capStatus": "Unconfirmed", "contactPerson": "Έλενα Χριστοφόρου (check surname spelling)", "email": "akakigrove@gmail.com", "filmBy": "2026-11-13", "notes": "", "phone": "99 477382", "shootDate": "", "shootDay": "3", "shootTime": "", "status": "To contact"}, "p6": {"callDate": "", "capDetail": "Their website lists RDP 2014-2020, Scheme 4.2 (processing and marketing investments). No amount or year given. Ask what it funded.", "capStatus": "Partial", "contactPerson": "Philip Philippou (CEO in 2014, re-confirm)", "email": "info@alionveg.com", "filmBy": "2026-11-13", "notes": "", "phone": "22 870644", "shootDate": "", "shootDay": "2", "shootTime": "", "status": "To contact"}, "p7": {"callDate": "", "capDetail": "None found online. Ask whether the biogas plants were EU-funded (RDP 4.1, renewables scheme, LIFE). Flag to IMH if there is no CAP link.", "capStatus": "Unconfirmed", "contactPerson": "No names published", "email": "farma@andreou.com", "filmBy": "2026-12-04", "notes": "", "phone": "24 816333", "shootDate": "", "shootDay": "6", "shootTime": "", "status": "To contact"}, "p8": {"callDate": "", "capDetail": "None found online (their website was funded by THALEIA, which is cohesion, not CAP). Ask about the Beekeeping Programme under the CAP Strategic Plan 2023-2027 (€339,306 a year, half EU).", "capStatus": "Unconfirmed", "contactPerson": "Sons of Μιχάλης Φιλίππου", "email": "info@orosmaxaira.com", "filmBy": "2026-11-27", "notes": "", "phone": "25 622305 / 99 937230", "shootDate": "", "shootDay": "5", "shootTime": "", "status": "To contact"}};
+const SNAP_WHEN = "29 Oct 2026, 21:05";
+const CYPATH = "M645.3,386.1L645.3,384.4L643.8,384.4L640.9,384.4L640.9,381.9L639.4,381.1L636.5,380.2L637.9,379.4L639.4,379.4L642.3,380.2L643.8,381.9L645.3,381.9L648.2,381.9L649.7,382.7L651.2,385.3L649.7,385.3L648.2,385.3L646.8,386.1L645.3,386.1ZM629.1,373.5L629.1,372.6L627.6,371.8L629.1,369.3L629.1,367.6L630.6,366.7L633.5,366.7L633.5,371.8L630.6,372.6L629.1,373.5ZM179.5,280.8L183.9,280.0L188.3,280.8L200.1,282.5L208.9,283.3L222.1,285.0L235.3,289.2L245.6,296.0L255.9,300.2L272.1,296.0L282.3,286.7L291.2,274.1L297.0,258.1L300.0,239.5L300.0,205.8L298.5,191.5L294.1,175.5L304.4,177.2L320.5,187.3L329.4,189.8L354.3,194.9L383.7,193.2L433.7,199.9L441.0,203.3L501.3,210.0L595.3,194.9L629.1,175.5L646.8,166.2L667.3,169.6L689.4,162.9L749.6,139.3L765.8,127.5L787.8,119.1L808.4,98.0L820.1,95.5L843.7,88.7L865.7,82.0L881.9,71.0L956.8,35.7L971.5,29.8L975.9,28.9L974.4,30.6L973.0,32.3L971.5,34.0L971.5,35.7L970.0,50.0L968.5,53.4L965.6,54.2L955.3,55.9L953.9,57.6L914.2,82.8L878.9,114.0L790.8,167.1L779.0,177.2L770.2,189.8L762.8,205.8L758.4,212.6L752.5,216.8L742.3,217.6L732.0,215.1L723.2,214.3L714.3,218.5L704.1,235.3L698.2,244.6L696.7,253.0L693.8,291.8L699.6,296.0L715.8,312.8L718.8,317.9L721.7,324.6L726.1,330.5L739.3,342.3L743.7,345.7L749.6,350.7L755.5,357.5L759.9,370.9L764.3,380.2L770.2,387.8L774.6,391.2L770.2,392.0L758.4,391.2L748.1,387.8L743.7,382.7L739.3,380.2L717.3,383.6L698.2,388.6L693.8,391.2L690.8,395.4L679.1,392.8L671.7,394.5L668.8,392.0L673.2,387.8L677.6,387.0L677.6,378.5L670.3,377.7L664.4,373.5L665.9,362.5L662.9,359.2L652.6,354.9L655.6,349.0L658.5,346.5L664.4,344.0L667.3,345.7L670.3,349.0L676.1,347.4L680.5,344.0L683.5,340.6L686.4,338.1L693.8,344.0L696.7,339.8L696.7,338.9L699.6,338.1L702.6,333.9L699.6,328.8L696.7,328.8L696.7,326.3L695.2,324.6L693.8,319.6L690.8,318.7L689.4,314.5L683.5,314.5L682.0,323.8L682.0,331.4L685.0,335.6L682.0,338.1L680.5,340.6L674.7,344.8L670.3,345.7L667.3,342.3L662.9,340.6L652.6,348.2L651.2,354.1L648.2,354.9L643.8,354.1L639.4,358.3L629.1,350.7L620.3,358.3L615.9,359.2L617.4,354.1L620.3,343.1L618.8,340.6L614.4,340.6L610.0,344.8L604.1,346.5L601.2,350.7L602.7,355.8L604.1,357.5L605.6,359.2L613.0,363.4L614.4,366.7L611.5,370.1L611.5,372.6L618.8,375.2L617.4,381.1L613.0,380.2L613.0,387.8L604.1,391.2L593.9,402.1L590.9,408.0L588.0,416.4L585.0,424.9L585.0,434.1L585.0,443.4L585.0,447.6L580.6,449.3L577.7,451.0L576.2,460.2L573.3,462.8L567.4,465.3L554.2,465.3L548.3,466.1L545.4,470.3L541.0,476.2L536.5,481.3L530.7,483.8L517.4,486.4L505.7,492.3L495.4,494.8L489.5,487.2L489.5,501.5L477.8,508.3L446.9,515.0L441.0,517.5L438.1,520.1L432.2,523.4L426.3,525.1L397.0,520.9L367.6,525.1L361.7,526.8L355.8,530.2L336.7,547.9L332.3,556.3L323.5,556.3L314.7,558.0L311.7,561.3L308.8,559.6L307.3,552.1L313.2,547.9L314.7,550.4L322.0,550.4L322.0,536.9L307.3,535.2L302.9,540.3L300.0,545.3L298.5,542.8L292.6,540.3L291.2,543.6L279.4,540.3L272.1,534.4L269.1,530.2L269.1,523.4L266.2,524.3L263.2,524.3L261.8,524.3L258.8,524.3L257.4,523.4L255.9,525.9L254.4,528.5L253.0,530.2L247.1,531.0L244.1,538.6L236.8,536.9L230.9,536.1L228.0,539.4L229.4,547.0L223.6,548.7L207.4,551.2L189.8,547.9L173.6,540.3L153.0,527.6L145.7,524.3L136.9,521.7L119.2,520.1L111.9,517.5L106.0,513.3L89.8,499.8L86.9,497.3L84.0,483.0L82.5,480.5L82.5,475.4L73.7,449.3L69.3,445.9L60.5,440.0L56.1,435.8L53.1,430.8L50.2,424.9L50.2,418.1L53.1,412.2L45.8,398.7L44.3,393.7L44.3,382.7L42.8,373.5L34.0,358.3L31.1,350.7L29.6,338.1L31.1,328.8L35.5,325.5L44.3,331.4L56.1,344.8L61.9,349.9L70.7,353.3L86.9,352.4L101.6,344.8L114.8,333.0L123.6,319.6L129.5,304.4L133.9,296.0L139.8,290.9L141.3,288.4L142.7,286.7L144.2,285.0L147.2,285.9L150.1,288.4L153.0,289.2L157.4,288.4L163.3,285.0L170.7,281.7L179.5,280.8Z";
+const MAP = {W:1000,H:614,s:498.885786565743,k:0.8181497174250234,lon0:32.2,lat1:35.75};
+const proj=(lat,lon)=>[(lon-MAP.lon0)*MAP.k*MAP.s,(MAP.lat1-lat)*MAP.s];
+
+const STATUSES=[
+  ["To contact","todo"],["Contacted","prog"],["Call booked","prog"],["Call done","book"],
+  ["Shoot booked","book"],["Filmed","done"],["In edit","done"],["Delivered","done"],["Dropped","bad"]];
+const STATUS_CLS=Object.fromEntries(STATUSES);
+const CAPS=[["Confirmed","done"],["Partial","prog"],["Unconfirmed","todo"],["No CAP link","bad"]];
+const CAP_CLS=Object.fromEntries(CAPS);
+
+const OBJ=[
+ ["o1","Fair income"],["o2","Competitiveness"],["o3","Farmers in the value chain"],["o4","Climate action"],
+ ["o5","Water, soil & air"],["o6","Biodiversity & landscapes"],["o7","Young farmers"],["o8","Vibrant rural areas"],
+ ["o8g","Gender equality"],["o9","Food quality, health & animal welfare"],["o10","Knowledge & innovation"]];
+
+const P=[
+{id:"p1",n:6,name:"Mountain Berries Pitsilia",place:"Αγρίδια · Χανδριά · Κυπερούντα",district:"Λεμεσός",lat:34.948,lon:32.978,approx:true,lx:-70,ly:-34,
+ one:"A young agronomist and his family growing berries at 950 to 1,300 m in the Pitsilia mountains.",
+ story:["Family farm, first plantings in 2018. Main plot of 10 stremmata at Kaminatzia, between Αγρίδια and Χανδριά, plus 5 stremmata at Κυπερούντα.","Blueberries, strawberries, currants, gooseberries and red, purple, golden and black raspberries.","Νικόλας Βαλανίδης: agri-science degree, MSc in plant biotechnology, now a PhD at TEPAK. Research partnerships on hydroponic substrates; anti-hail nets and net houses."],
+ highlight:"A younger generation betting on a crop that isn't traditional for Cyprus. The difficulty of mountain farming, drought and climate, the use of research and technology, and how a small farm can make a high-value product. Cost and viability of a mountain farm gives the Fair Income angle.",
+ themes:["Generational Renewal","Competitiveness & Resilience","Innovation","Sustainability","Fair Income"],
+ obj:["o1","o2","o4","o5","o7","o10"],
+ imh:"Proof that the CAP's young-farmer agenda works in the mountains, not just on the plains. A scientist who chose the village over the city is exactly the face the Ministry wants for generational renewal.",
+ must:"Him saying, in his own words, what support he had to get started and what it let him build (nets, irrigation, net houses).",
+ risk:"No CAP support found online. The research money (3PRO-TROODOS) was ERDF via the Research and Innovation Foundation, which is cohesion funding, not CAP. Confirm young-farmer support (6.1) or investment (4.1) before booking.",
+ confirm:["Did you receive young-farmer support (Μέτρο 6.1) or investment support (4.1) for nets, net houses or irrigation?","Correct email (the research doc had a typo: mountainbberries)","What's happening on the farm in Nov to Dec? Any fruit left at altitude?","Summer footage or photos of harvest we could use?","Is family on camera too (parents who helped plant in 2018)?"],
+ qs:[
+  ["Ποιος είναι",["Πείτε μας ποιος είστε και τι κάνετε εδώ πάνω, σαν να το λέγατε σε έναν φίλο."]],
+  ["Σχέση με τη γη",["Γιατί berries, και γιατί στην Πιτσιλιά; Τι σας είπαν οι γύρω όταν φυτέψατε τα πρώτα φυτά το 2018;","Τι σημαίνει να καλλιεργείς στα 1.300 μέτρα; Τι δίνει το βουνό στο φρούτο;"]],
+  ["Πρόκληση",["Ποια ήταν η πιο δύσκολη χρονιά μέχρι σήμερα; Τι πήγε στραβά;","Πώς διαχειρίζεστε το νερό σε χρονιές ανομβρίας, το χαλάζι, τον καύσωνα;"]],
+  ["Λύση & ΚΑΠ",["Είστε επιστήμονας και αγρότης. Πώς μπαίνει η έρευνα μέσα στο χωράφι;","Ποια στήριξη πήρατε για να ξεκινήσετε ή να επενδύσετε, και τι κάνατε με αυτήν;","Χωρίς αυτή τη στήριξη, πού θα ήταν σήμερα το κτήμα;"]],
+  ["Μέλλον",["Τι θα λέγατε σε συνομηλίκους σας που φεύγουν από τα χωριά;","Πώς βλέπετε την Πιτσιλιά σε 20 χρόνια;"]]],
+ broll:["Hands picking or pruning in the net houses","Wide drone of terraces with the mountains behind (if allowed)","Anti-hail nets and irrigation lines up close","Him checking plants with a notebook or sensor: the scientist side","Village life in Αγρίδια or Χανδριά: kafeneio, road, church"],
+ season:"Low season. Little or no fruit in Nov to Dec. Ask for summer footage or plan a spring pickup shoot."},
+
+{id:"p2",n:1,name:"Το Περβόλι του Θεόδωρου",place:"Μαρώνι",district:"Λάρνακα",lat:34.7595,lon:33.3549,lx:-58,ly:-30,
+ one:"An engineer who took his father's olive grove organic and built award-winning oils and herb products.",
+ story:["Θεόδωρος Χριστοφόρου planted the first Koroneiki trees in 1980. The grove was certified organic in 2015; 11,000 herb plants went in in 2018.","Brands: Marova and LAXIES (an organic oil from the Cypriot Λαδοελιά variety, launched 2021), plus Teo iced tea.","2026 NYIOOC Silver for Marova Organic. Χάρης has said EU programmes helped him with both funding and knowledge."],
+ highlight:"The shift from family plot to modern organic business, passing it from one generation to the next, added value through quality and processing, the link between sustainability and making a living, and how European support helped the business grow.",
+ themes:["Generational Renewal","Sustainability","Competitiveness","Fair Income","Rural Entrepreneurship"],
+ obj:["o1","o2","o3","o5","o7","o8","o9","o10"],
+ imh:"The CAP isn't only money: it also brings knowledge. A son returning, going organic and selling his own branded oil abroad shows farmers capturing more of the value chain.",
+ must:"Which programme helped, what it paid for or taught him, and the moment it made a difference.",
+ risk:"No CAP support found online. Mechanical engineer background, the 40,000 m² size and the 2023 award are also unverified. Correction: LAXIES is his brand, not an award.",
+ confirm:["Which EU programme(s)? Organic payments, 4.1 investment, advisory or training support?","Which body gave the 2023 sustainability award? (likely Gastronomos / Kathimerini)","Is the engineering background right? Did he take over in 2015?","Is the harvest or milling happening on our shoot date?","Will Θεόδωρος appear on camera? (father and son together is the story)"],
+ qs:[
+  ["Ποιος είναι",["Πείτε μας ποιος είστε και πώς ξεκινά μια μέρα σας εδώ."]],
+  ["Σχέση με τη γη",["Ο πατέρας σας φύτεψε τις πρώτες κορωνέικες το 1980. Ποια είναι η πρώτη σας ανάμνηση εδώ;","Ήσασταν μηχανικός. Τι σας έφερε πίσω στο κτήμα;"]],
+  ["Πρόκληση",["Τι ήταν πιο δύσκολο από ό,τι περιμένατε όταν γίνατε βιολογικοί;","Πώς επηρεάζει η ξηρασία τις ελιές τα τελευταία χρόνια;"]],
+  ["Λύση & ΚΑΠ",["Γιατί φτιάξατε δικά σας προϊόντα αντί να πουλάτε τον καρπό; Τι κερδίζει έτσι ο παραγωγός;","Πώς σας βοήθησαν τα ευρωπαϊκά προγράμματα, στη χρηματοδότηση αλλά και στη γνώση;","Τι σημαίνει για ένα μικρό κυπριακό κτήμα να βραβεύεται στη Νέα Υόρκη;"]],
+  ["Μέλλον",["Τι κρατήσατε από τον τρόπο του πατέρα σας, και τι αλλάξατε;","Τι θα λέγατε σε ένα παιδί που κληρονομεί ένα χωράφι και δεν ξέρει τι να το κάνει;"]]],
+ broll:["Harvest: nets under the trees, shaking branches","Fresh oil at the mill, green and cloudy","Father and son walking the rows","Herb beds and drying","The bottles and the NYIOOC award"],
+ season:"Peak season. Olive harvest and milling run Nov to Dec. Shoot early."},
+
+{id:"p3",n:2,name:"Planty",place:"Ψεματισμένος",district:"Λάρνακα",lat:34.7402,lon:33.3524,lx:58,ly:26,
+ one:"A 10,000 m² hydroponic farm for microgreens, herbs and leafy greens, built with Rural Development Programme support.",
+ story:["Aeroponics Mediterranean Ltd, founded Sept 2013 by Λοΐζος Τόφας (rural and surveying engineer) and Γιάννος Κωνσταντινίδης (electrical engineer).","5,000 m² nursery plus 5,000 m² NFT hydroponics, with 850 m² of storage and packing. Launched in Sept 2019.","Applied in Dec 2015, approved Nov 2017. Presented by the EU CAP Network as a good practice."],
+ highlight:"How European rural funding turns into a real investment, how technology helps where natural resources are scarce, how productivity and quality rise, and how innovation makes Cypriot farming more competitive.",
+ themes:["Competitiveness & Resilience","Innovation","Sustainability","Resource Efficiency","Market Development"],
+ obj:["o2","o3","o4","o5","o10"],
+ imh:"The textbook CAP-in-action case, and the one episode where the numbers can go on screen. €1.03m invested, €318k from the EU farm fund, and it's already an EU CAP Network good practice, so the Ministry will love it.",
+ must:"A clear before and after: an empty field in 2015, now a working facility. Plus one sentence on what the RDP support made possible.",
+ risk:"None on CAP. Avoid turning it into an engineering lecture: keep it human (why two engineers became farmers).",
+ confirm:["Was it sub-measure 4.1 or 4.2? (the packing unit may have gone through Commerce)","What has happened since 2019: exports, staff numbers, new products?","Water use compared with soil growing: do they have a figure?","Who speaks on camera: Λοΐζος, Γιάννος, or both?","Hygiene rules inside the growing area (gloves, hairnets)?"],
+ qs:[
+  ["Ποιος είναι",["Δύο μηχανικοί που έγιναν αγρότες. Πώς έγινε αυτό;"]],
+  ["Σχέση με τη γη",["Τι σημαίνει να καλλιεργείς χωρίς χώμα; Εξηγήστε το σαν να μιλάτε σε παιδί."]],
+  ["Πρόκληση",["Από την αίτηση το 2015 μέχρι τη λειτουργία το 2019: πώς ήταν αυτά τα τέσσερα χρόνια;","Ποιο ήταν το μεγαλύτερο ρίσκο που πήρατε;"]],
+  ["Λύση & ΚΑΠ",["Τι έγινε πραγματικότητα χάρη στη στήριξη του Προγράμματος Αγροτικής Ανάπτυξης;","Πόσο νερό εξοικονομείτε σε σχέση με μια συμβατική καλλιέργεια;","Πού φτάνουν σήμερα τα προϊόντα σας, στην Κύπρο και στο εξωτερικό;"]],
+  ["Μέλλον",["Τι θα λέγατε σε έναν νέο που θέλει να ξεκινήσει κάτι καινοτόμο στη γεωργία;","Πώς θα μοιάζει η κυπριακή γεωργία σε 20 χρόνια;"]]],
+ broll:["Long tracking shot down the NFT channels","Macro of microgreens, roots in flowing water","Seeding in the nursery","Packing line and boxes leaving","Exterior wide or drone of the greenhouse in the Larnaca landscape"],
+ season:"Any season. Indoor production, so it works on any date. Pair with Περβόλι (2 km away)."},
+
+{id:"p4",n:3,name:"Ygea Farm",place:"Μαθιάτης",district:"Λευκωσία",lat:34.9827,lon:33.3222,lx:-62,ly:-10,
+ one:"A family that has farmed for over a century, rebuilt after 1974, and now runs a fully organic farm.",
+ story:["Farmed in Αγία, displaced in 1974 to Αγλαντζιά, now in Μαθιάτης.","Fully organic: free-range eggs, extra virgin olive oil, sage and oregano. Essential oils are a planned project of the son.","Founder Γιώργος Κωνσταντινίδης; son Ορέστης (biology studies in the Netherlands) leads expansion into essential oils, agritourism and education. Won the Gastronomos (Kathimerini) Sustainable Development award. A DG AGRI journalist tour visited in 2026."],
+ highlight:"A farming family's continuity over time and how it adapts to new demands: organic livestock, animal welfare, biodiversity, managing natural resources, and whether modern farming can combine tradition, viability and environmental care.",
+ themes:["Sustainability","Biodiversity","Resilience","Rural Vitality","Fair Income"],
+ obj:["o1","o5","o6","o8","o9"],
+ imh:"The most emotional story in the set. Resilience across generations, plus organic livestock and animal welfare, which no other episode covers as well. DG AGRI has already brought journalists here, so it's a known good example.",
+ must:"Which EU-supported project changed the farm, and the father to son handover (Ορέστης is generational renewal in person).",
+ risk:"Claims EAFRD compliance but no measure is named. 1974 is sensitive: let him decide how much to say, and keep it about resilience rather than politics.",
+ confirm:["Which RDP measure paid for what? (4.1 investment? organic payments under Measure 11?)","What year was the Gastronomos award?","Will Ορέστης be there on the shoot day?","Hygiene and biosecurity rules around the hens","What is happening now: olive harvest, egg collection times?"],
+ qs:[
+  ["Ποιος είναι",["Πείτε μας ποιοι είστε και πόσες γενιές η οικογένειά σας δουλεύει τη γη."]],
+  ["Σχέση με τη γη",["Η οικογένειά σας ξεκίνησε στην Αγία. Πώς ξαναστήσατε τα πάντα από την αρχή; (όσα θέλετε να πείτε)","Γιατί επιλέξατε να γίνετε πλήρως βιολογικοί;"]],
+  ["Πρόκληση",["Τι σημαίνει ευζωία για τις κότες σας στην πράξη;","Τι κάνετε για το νερό, την ενέργεια και τη βιοποικιλότητα στο κτήμα;"]],
+  ["Λύση & ΚΑΠ",["Ποια έργα έγιναν με ευρωπαϊκή στήριξη, και τι άλλαξαν στη φάρμα;","Πώς βγαίνει οικονομικά μια βιολογική φάρμα σήμερα;"]],
+  ["Μέλλον",["(Ορέστη) Τι σε έφερε πίσω στη φάρμα; Τι θέλεις να προσθέσεις εσύ;","Τι θέλετε να βρουν εδώ τα εγγόνια σας;"]]],
+ broll:["Hens free-ranging at first light","Collecting eggs by hand","Olive trees and wild flowers or herbs between rows","Father and son working side by side","Old family photos from Αγία, if they share them"],
+ season:"Good season. Olive harvest plus the hens year-round. Pair with ALION (Πέρα Χωριό) on the same day."},
+
+{id:"p5",n:5,name:"Akaki Grove",place:"Ακάκι",district:"Λευκωσία",lat:35.1322,lon:33.1145,lx:-40,ly:-34,
+ one:"A young woman who came back to her family's citrus and olive grove and runs it on agroecology.",
+ story:["Έλενα Χριστοφόρου joined the family farm in 2019 and founded Akaki Grove in 2020, on a citrus plantation that dates from the 1960s.","Certified organic olive oil, citrus and processed products, run on organic, permaculture and agroecology principles, with soil engineer Nicolas Netien.","Kot-Kot project: retired hens fed on school food waste. Crowne Plaza Limassol buys all its olive oil and 95% of its citrus from her. AFP covered the farm in Feb 2025."],
+ highlight:"The clearest story about women and the young generation in farming: why she chose to come back, how she sees farming as a profession with a future, how soil health links to drought resilience, and how a small producer can combine production, processing, environmental education and business.",
+ themes:["Gender Balance","Generational Renewal","Sustainability","Climate Resilience","Biodiversity"],
+ obj:["o4","o5","o6","o7","o8","o8g","o9"],
+ imh:"The series' strongest hope message, and its only episode carrying gender equality. Gender equality is written into the new CAP's rural objective, so make sure she's the face of a teaser or the series opener.",
+ must:"Why she came back, and what she'd say to a young woman thinking about farming. Plus any support (young farmer aid) in her own words.",
+ risk:"No CAP support found online. The 2026 award and dates are unverified, and international press spells her surname 'Christoforos': check for the lower third.",
+ confirm:["Young farmer aid (6.1 or the new CAP young farmer support), organic or eco-scheme payments?","Which 2026 award, given by whom?","Surname spelling for the lower third","Harvest dates: olives and citrus","Can we film the Kot-Kot hens and the school link?"],
+ qs:[
+  ["Ποιος είναι",["Πείτε μας ποια είστε και τι μεγαλώνει εδώ στο Ακάκι."]],
+  ["Σχέση με τη γη",["Γιατί επιστρέψατε στο κτήμα το 2019; Τι σας έλεγαν οι γύρω σας τότε;","Ποια είναι η πρώτη σας ανάμνηση μέσα σε αυτά τα δέντρα;"]],
+  ["Πρόκληση",["Πώς είναι να είσαι νέα γυναίκα αγρότισσα στην Κύπρο σήμερα;","Τι είναι για σας η υγεία του εδάφους, με απλά λόγια; Πώς βοηθά όταν δεν βρέχει;"]],
+  ["Λύση & ΚΑΠ",["Πείτε μας για το Kot-Kot: κότες, σχολεία και φαγητό που δεν πετιέται.","Υπήρξε στήριξη, π.χ. για νέους γεωργούς ή βιολογική γεωργία; Τι σήμαινε για σας;"]],
+  ["Μέλλον",["Τι θα λέγατε σε ένα κορίτσι 18 χρονών που σκέφτεται τη γεωργία;","Πώς θέλετε να είναι αυτό το κτήμα όταν θα το παραδώσετε;"]]],
+ broll:["Picking oranges or olives","Hands in soil: compost, cover crops, mulch","The Kot-Kot hens","Her walking the grove at golden hour","Bottling or processing"],
+ season:"Peak season. Olives Nov to Dec, citrus starting. Shoot early."},
+
+{id:"p6",n:4,name:"ALION",place:"Δάλι · Πέρα Χωριό",district:"Λευκωσία",lat:35.0282,lon:33.3751,lx:56,ly:-24,
+ one:"A packer and exporter of fresh vegetables and ready-to-eat products, selling to retail, HORECA and 25+ countries.",
+ story:["Founded 1990. Packing facility at Dramas 1, Πέρα Χωριό.","Ready-to-eat salads, herbs, microgreens and vegetables. A leader in Cypriot retail and HORECA; exports to more than 25 countries.","Their own website lists a project under RDP 2014-2020, Scheme 4.2 (investments in processing and marketing)."],
+ highlight:"How primary production links to packing, processing, markets and exports; how innovation and investment add value to a farm product; how EU support makes a Cypriot business more competitive; and the challenges along the farm-to-fork chain.",
+ themes:["Competitiveness & Resilience","Innovation","Market Development","Added Value","Fair Income"],
+ obj:["o1","o2","o3","o8","o10"],
+ imh:"The farm-to-fork and exports episode. It shows CAP money working beyond the field, in processing and getting Cypriot produce abroad. The Ministry will want to hear how this helps the farmers who supply ALION.",
+ must:"What Scheme 4.2 paid for, and one supplying farmer on camera, so it doesn't read as a corporate ad.",
+ risk:"Biggest risk of turning into a promo (the brief says it mustn't). Find a human face: a founder, a long-serving worker or a supplying farmer. Recent customer reviews complain about deliveries, so stay off the retail and delivery side.",
+ confirm:["What did Scheme 4.2 fund, in what year, for how much?","Is Philip Philippou still CEO? Who goes on camera?","Can we film a supplying farmer's field and follow the produce to the packing line?","Hygiene rules in the packing hall","Which hours are busiest on the line?"],
+ qs:[
+  ["Ποιος είναι",["Πείτε μας πώς ξεκίνησε η ALION το 1990 και πού είναι σήμερα."]],
+  ["Σχέση με τη γη",["Ποια είναι η διαδρομή ενός μαρουλιού από το χωράφι μέχρι το ράφι σε μια άλλη χώρα;","Με πόσους παραγωγούς συνεργάζεστε; Τι κερδίζουν αυτοί;"]],
+  ["Πρόκληση",["Πώς ανταγωνίζεται ένα μικρό νησί σε 25 αγορές;","Ποιες είναι οι μεγαλύτερες δυσκολίες στην αλυσίδα, από το χωράφι μέχρι το πιάτο;"]],
+  ["Λύση & ΚΑΠ",["Τι επενδύσεις έγιναν με το Καθεστώς 4.2, και τι άλλαξαν στην παραγωγή και τις εξαγωγές;","Για ποια καινοτομία είστε πιο περήφανοι;"]],
+  ["Μέλλον",["Τι χρειάζεται η κυπριακή γεωργία για να πουλά περισσότερα έξω;","Τι θα λέγατε σε έναν νέο παραγωγό που θέλει να συνεργαστεί μαζί σας;"]]],
+ broll:["A supplying farmer's field at harvest","Crates arriving, washing, packing line","Hands packing herbs or microgreens","Pallets and a truck leaving for export","Wide of the facility in the Μεσαορία landscape"],
+ season:"Any season. Pair with Ygea (Μαθιάτης) on the same day."},
+
+{id:"p7",n:8,name:"Α/φοί Ανδρέου",place:"Τερσεφάνου · Αραδίππου",district:"Λάρνακα",lat:34.8471,lon:33.5327,lx:30,ly:30,
+ one:"One of Cyprus's largest integrated pig producers, turning farm waste into biogas and green electricity.",
+ story:["80+ staff, 3,300 sows, over 90,000 pigs a year. Own feed mill making 25,000 t a year.","Two waste treatment plants make biogas, which runs a 1 MWe / 1 MWth combined heat and power plant.","Energy self-sufficient, exporting about 80% of its electricity to the grid as green power."],
+ highlight:"Large-scale livestock seen through resource efficiency, waste management, energy self-sufficiency, the circular economy and animal welfare, plus how a large unit copes with rising costs and other market pressures.",
+ themes:["Competitiveness & Resilience","Circular Economy","Resource Efficiency","Environmental Sustainability","Fair Income"],
+ obj:["o1","o2","o4","o5","o9"],
+ imh:"The only large-scale, livestock and circular-economy episode, and a counterpoint to the small farms. It shows the CAP's climate and environment objectives at industrial scale.",
+ must:"The CAP link stated concretely. Without it, this episode doesn't meet the brief.",
+ risk:"High. No CAP or EU support documented and no names published. Pig units have strict biosecurity (shower-in, restricted areas), and filming animals can draw negative comments. Confirm with IMH before booking.",
+ confirm:["Were the biogas plants or upgrades EU-funded? (RDP 4.1, renewables scheme, LIFE, other)","Who speaks on camera? Family member or manager?","Biosecurity: what can we film, what protective gear, do we need a quarantine period after other farms?","Animal welfare investments we can show","Can we film the biogas plant and CHP up close?"],
+ qs:[
+  ["Ποιος είναι",["Πείτε μας πώς ξεκίνησε η οικογενειακή επιχείρηση και πώς έφτασε εδώ."]],
+  ["Σχέση με τη γη",["Τι σημαίνει να τρέχεις μια μονάδα αυτού του μεγέθους μέρα με τη μέρα;"]],
+  ["Πρόκληση",["Πώς αντέξατε τις αυξήσεις κόστους των τελευταίων χρόνων, σε ζωοτροφές και ενέργεια;","Τι γίνεται με τα απόβλητα μιας τόσο μεγάλης μονάδας;"]],
+  ["Λύση & ΚΑΠ",["Πώς γίνονται τα απόβλητα ενέργεια; Εξηγήστε το απλά.","Τι σημαίνει να είσαι ενεργειακά αυτάρκης και να δίνεις πράσινο ρεύμα στο δίκτυο;","Ποια στήριξη, ευρωπαϊκή ή άλλη, έκανε δυνατή αυτή την επένδυση;","Πώς φροντίζετε την ευζωία των ζώων;"]],
+  ["Μέλλον",["Πώς βλέπετε την κτηνοτροφία στην Κύπρο σε 20 χρόνια;"]]],
+ broll:["Biogas digesters and the CHP plant","Electricity meters or a grid connection: the 'green power out' moment","Feed mill","Animal housing, only where biosecurity allows","Drone over the site (with permission)"],
+ season:"Any season. Book last in the day or on its own day, because of biosecurity."},
+
+{id:"p8",n:7,name:"Όρος Μαχαιρά",place:"Μελίνη",district:"Λάρνακα",lat:34.865,lon:33.167,lx:-58,ly:30,
+ one:"A family beekeeping business that started with five hives in 1983 and is now run by the second generation.",
+ story:["M.F. Oros Maxaira Ltd. Founded by Μιχάλης Φιλίππου and Κώστας Χειμώνας; it started with five hives from Κώστας's father. Μιχάλης's sons run it now.","Packs and sells honey and bee products, with ISO 14001 and ISO 22000.","Visitor experiences: 'Get to Know the Bee', hive adventures, workshops, school visits and Adopt a Hive."],
+ highlight:"The role of bees and pollination in farming and biodiversity, climate change and extreme weather in beekeeping, handing the business from one generation to the next, growing products and experiences beyond honey, and keeping rural activity going.",
+ themes:["Sustainability","Biodiversity","Resilience","Generational Renewal","Rural Vitality"],
+ obj:["o4","o6","o7","o8","o9"],
+ imh:"Pollination underpins every other farm in the series, so this episode connects them. Agritourism and school visits show rural vitality. There's also a ready CAP hook: the national Beekeeping Programme (€339,306 a year, half EU-funded) under the CAP Strategic Plan.",
+ must:"Confirmation that they use the Beekeeping Programme and what it pays for (hives, varroa treatment, equipment), in their words.",
+ risk:"Participation in the programme isn't documented (the EU logo on their website is THALEIA cohesion funding, not CAP). Bees are less active in winter, so plan for archive or a warm-day hive opening.",
+ confirm:["Do you claim under the Beekeeping Programme? What does it pay for?","Sons' first names and who speaks on camera","What work happens with the hives in Nov to Dec? Can we open a hive on a warm day?","Summer extraction footage we could use?","What was the THALEIA project?"],
+ qs:[
+  ["Ποιος είναι",["Πείτε μας ποιοι είστε και πώς μπήκατε στον κόσμο της μέλισσας."]],
+  ["Σχέση με τη γη",["Το 1983 ξεκινήσατε με πέντε κυψέλες. Πείτε μας για εκείνη την αρχή.","Πώς είναι να συνεχίζεις τη δουλειά του πατέρα σου;"]],
+  ["Πρόκληση",["Τι αλλάζει η κλιματική αλλαγή, η ξηρασία και οι καύσωνες στις μέλισσες;"]],
+  ["Λύση & ΚΑΠ",["Γιατί οι μέλισσες αφορούν κάθε αγρότη, όχι μόνο τους μελισσοκόμους;","Συμμετέχετε στο Μελισσοκομικό Πρόγραμμα; Τι σας βοηθά να κάνετε;","Γιατί ανοίξατε τις πόρτες σας σε επισκέπτες και σχολεία;"]],
+  ["Μέλλον",["Τι θέλετε να καταλάβει ένα παιδί όταν φεύγει από εδώ;","Πώς βλέπετε τη μελισσοκομία στην Κύπρο σε 20 χρόνια;"]]],
+ broll:["Opening a hive in suits, smoke, frames","Macro of bees on wild thyme or carob flowers (archive if needed)","Extraction and honey pouring","A school group or visitors in suits","The two generations together"],
+ season:"Low season. Bees less active. Pick a warm, still day and ask for summer footage."}
+];
+
+P.sort((a,b)=>a.n-b.n);
+function sameDayGroups(){const g={};P.forEach(p=>{const d=data[p.id];if(!d.shootDay||d.status==="Dropped")return;(g[d.shootDay]=g[d.shootDay]||[]).push(p)});return Object.values(g).filter(a=>a.length>1).map(a=>a.sort((x,y)=>x.n-y.n));}
+const badgeXY=p=>{const[x,y]=proj(p.lat,p.lon);return[x+p.lx*1.35,y+p.ly*1.35]};
+const CROPS={p1:[["🫐","Blueberries"],["🍓","Strawberries"],["🍒","Raspberries (red, purple, golden, black)"],["🟣","Currants & gooseberries"]],p2:[["🫒","Olives & oil (Koroneiki, Λαδοελιά)"],["🌿","Cypriot herbs"],["🧊","Iced tea"]],p3:[["🌱","Microgreens"],["🌿","Herbs"],["🥬","Leafy greens"]],p4:[["🥚","Organic eggs"],["🫒","Olive oil"],["🌿","Sage & oregano"]],p5:[["🫒","Organic olive oil"],["🍊","Citrus"],["🫙","Processed products"]],p6:[["🥬","Fresh vegetables"],["🌿","Herbs"],["🌱","Microgreens"],["🥗","Ready-to-eat salads"]],p7:[["🐖","Pork"],["🌾","Own feed mill"],["⚡","Biogas energy"]],p8:[["🍯","Honey"],["🐝","Bee products"]]};
+const MAPEMO={p1:"🫐",p2:"🫒",p3:"🌱",p4:"🥚",p5:"🍊",p6:"🥬",p7:"🐖",p8:"🐝"};
+const ANIMALS={p4:["🐔 Hens","Free-range laying hens. Ask about hygiene rules and egg collection times."],p5:["🐔 Hens","Kot-Kot retired hens fed on school food waste."],p7:["🐖 Pigs","3,300 sows. Strict biosecurity: shower-in, protective gear, restricted areas. Ask if we need a gap after visiting other animal farms (Ygea, Akaki)."],p8:["🐝 Bees","Live hives. Suits for the crew, no strong scents, and check nobody on the crew is allergic."]};
+const CITIES=[["Λευκωσία",35.1725,33.365],["Λεμεσός",34.6786,33.0413],["Λάρνακα",34.9229,33.6233],["Πάφος",34.7754,32.4245],["Αμμόχωστος",35.1167,33.95]];
+const HOLIDAYS={"2026-12-24":"Christmas Eve","2026-12-25":"Christmas","2026-12-26":"Boxing Day","2027-01-01":"New Year","2027-01-06":"Epiphany","2026-10-28":"Ochi Day"};
+
+const CORE=[
+ ["1 · Ποιος είναι ο άνθρωπος",["Πείτε μας ποιος είστε και τι κάνετε εδώ, σαν να το λέγατε σε έναν φίλο."]],
+ ["2 · Η σχέση του με τη γη",["Ποια είναι η πρώτη σας ανάμνηση από αυτό το μέρος;","Πώς μοιάζει μια συνηθισμένη σας μέρα;"]],
+ ["3 · Η πρόκληση ή η αλλαγή",["Ποια ήταν η πιο δύσκολη στιγμή μέχρι σήμερα;","Τι αλλάζει με το κλίμα και το νερό, και πώς το βλέπετε στην παραγωγή;"]],
+ ["4 · Η λύση και η ΚΑΠ",["Τι σας βοήθησε να κάνετε το επόμενο βήμα;","Ποια στήριξη πήρατε μέσα από την ΚΑΠ, και τι κάνατε με αυτήν;","Χωρίς αυτή τη στήριξη, πού θα ήσασταν σήμερα;","Τι θα λέγατε σε έναν συνάδελφο που διστάζει να κάνει αίτηση;"]],
+ ["5 · Το μήνυμα για το μέλλον",["Τι θα λέγατε σε έναν νέο που σκέφτεται να ασχοληθεί με τη γεωργία;","Αν είχατε μία φράση για το μέλλον της κυπριακής υπαίθρου, ποια θα ήταν;"]]];
+
+// ---------- state ----------
+let db=null, writable=false;
+const data={}; P.forEach(p=>data[p.id]={});
+const lastLocal={}; const queues={};
+let openId=null; const itab={};
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const byId=id=>P.find(p=>p.id===id);
+const PINK=new Set(["p1","p8","p6"]);const HALF=new Set([]);
+const badgeCol=id=>HALF.has(id)?"linear-gradient(90deg,var(--pink) 50%,var(--lime) 50%)":PINK.has(id)?"var(--pink)":"var(--lime)";
+const badgeFill=id=>HALF.has(id)?"url(#halfPL)":PINK.has(id)?"var(--pink)":"var(--lime)";
+const stCls=id=>STATUS_CLS[data[id].status||"To contact"]||"todo";
+const capCls=id=>CAP_CLS[data[id].capStatus||"Unconfirmed"]||"todo";
+const colorVar=c=>`var(--s-${c})`;
+
+// ---------- header stats ----------
+function renderStats(){
+  const cnt=k=>P.filter(p=>(data[p.id].status||"To contact")===k).length;
+  const contacted=P.filter(p=>!["To contact","Dropped"].includes(data[p.id].status||"To contact")).length;
+  const shootBooked=P.filter(p=>data[p.id].shootDate).length;
+  const filmed=P.filter(p=>["Filmed","In edit","Delivered"].includes(data[p.id].status)).length;
+  const cap=P.filter(p=>data[p.id].capStatus==="Confirmed").length;
+  document.getElementById("stats").innerHTML=
+   `<span class="stat">📞 <b>${contacted}</b>/8 contacted</span><span class="stat">🗓️ <b>${shootBooked}</b>/8 shoots dated</span><span class="stat">🎬 <b>${filmed}</b>/8 filmed</span><span class="stat">🇪🇺 <b>${cap}</b>/8 CAP confirmed</span>`;
+}
+
+// ---------- map ----------
+function renderMap(){
+  const W=MAP.W,H=MAP.H;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Map of Cyprus with the eight producers"><defs><linearGradient id="halfPL" x1="0" x2="1" y1="0" y2="0"><stop offset="50%" stop-color="var(--pink)"/><stop offset="50%" stop-color="var(--lime)"/></linearGradient></defs><rect width="${W}" height="${H}" fill="var(--sea)"/>`;
+  s+=`<path d="${CYPATH}" fill="var(--land)" stroke="var(--land-line)" stroke-width="1.4" stroke-linejoin="round"/>`;
+  // Troodos marker
+  const [tx,ty]=proj(34.9367,32.8633);
+  s+=`<path d="M${tx-7},${ty+5}L${tx},${ty-7}L${tx+7},${ty+5}Z" fill="none" stroke="var(--city)" stroke-width="1.5"/><text class="maptext" x="${tx}" y="${ty+28}" text-anchor="middle" font-size="19" fill="var(--city)" style="fill:var(--city)">Τρόοδος</text>`;
+  CITIES.forEach(([n,la,lo])=>{const [x,y]=proj(la,lo);
+    s+=`<circle cx="${x}" cy="${y}" r="5" fill="var(--city)"/><text class="maptext" x="${x+9}" y="${y-8}" font-size="21" style="fill:var(--city)">${n}${n==="Λεμεσός"?" · Kaimakki":""}</text>`;});
+  // same-day links
+  sameDayGroups().forEach(gr=>{for(let i=0;i<gr.length-1;i++){const[x1,y1]=badgeXY(gr[i]),[x2,y2]=badgeXY(gr[i+1]);
+    s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--accent)" stroke-width="7" stroke-linecap="round" opacity=".9"/>`;}});
+  P.forEach(p=>{const[x,y]=proj(p.lat,p.lon);const bx=x+p.lx*1.35,by=y+p.ly*1.35;const c=stCls(p.id);
+    s+=`<g class="pin" tabindex="0" role="button" data-id="${p.id}" aria-label="${esc(p.name)}, ${esc(data[p.id].status||"To contact")}">
+      <line x1="${x}" y1="${y}" x2="${bx}" y2="${by}" stroke="var(--ink)" stroke-width="1.5" opacity=".55"/>
+      <circle cx="${x}" cy="${y}" r="6" fill="var(--ink)"/>
+      <circle class="badge" cx="${bx}" cy="${by}" r="22" fill="${badgeFill(p.id)}" stroke="${openId===p.id?"var(--ink)":"var(--surface)"}" stroke-width="${openId===p.id?3:2}"/>
+      <text x="${bx}" y="${by+7}" text-anchor="middle" font-size="20" font-weight="700" style="fill:var(--badge-ink);font-family:var(--f-body)">${p.n}</text>
+      <text x="${bx+(p.lx<0?-30:30)}" y="${by+8}" text-anchor="middle" font-size="22">${MAPEMO[p.id]}</text>
+      <title>${esc(p.name)} · ${esc(p.place)}${p.approx?" (approximate)":""}${ANIMALS[p.id]?" · animals: "+ANIMALS[p.id][0]:""}</title></g>`;});
+  s+=`</svg>`;
+  const m=document.getElementById("map");m.innerHTML=s;
+  m.querySelectorAll(".pin").forEach(g=>{
+    g.addEventListener("click",()=>toggleRow(g.dataset.id,true));
+    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggleRow(g.dataset.id,true)}});});
+  document.getElementById("legend").innerHTML=
+   `<span><i class="dot" style="background:var(--pink)"></i>${P.filter(p=>PINK.has(p.id)).map(p=>p.n).join(", ")}</span><span><i class="dot" style="background:var(--lime)"></i>${P.filter(p=>!PINK.has(p.id)&&!HALF.has(p.id)).map(p=>p.n).join(", ")}</span>`+(HALF.size?`<span><i class="dot" style="background:linear-gradient(90deg,var(--pink) 50%,var(--lime) 50%)"></i>${P.filter(p=>HALF.has(p.id)).map(p=>p.n).join(", ")}</span>`:"")+
+   `<span><i style="width:22px;border-top:4px solid var(--accent);border-radius:2px;display:inline-block"></i>Film on the same day</span>`+
+   `<span>🫒🐔🐝 Main crop or animal</span><span>⏰ Red chip = past its film-by date</span>`;
+}
+
+// ---------- list ----------
+function qText(p){return p.qs.map(([g,qs])=>g+"\n"+qs.map((q,i)=>`${i+1}. ${q}`).join("\n")).join("\n\n")}
+function rowHTML(p){
+  const t=itab[p.id]||"track";
+  const tabs=[["track","✏️ Tracking"],["story","📖 Story"],["imh","🇪🇺 For IMH & the Ministry"],["call","📞 Call"],["interview","🎙️ Interview"],["shoot","🎬 Shoot"]];
+  const opt=(arr,v)=>arr.map(([k])=>`<option${k===v?" selected":""}>${esc(k)}</option>`).join("");
+  const d=data[p.id];
+  const dis=writable?"":" disabled";
+  const f=(id,label,html,wide)=>`<div class="field${wide?" wide":""}"><label for="f-${p.id}-${id}">${label}</label>${html}</div>`;
+  const inp=(k,type="text",ph="")=>`<input id="f-${p.id}-${k}" data-k="${k}" type="${type}" value="${esc(d[k]||"")}" placeholder="${esc(ph)}"${dis}>`;
+  const ta=(k,ph="")=>`<textarea id="f-${p.id}-${k}" data-k="${k}" placeholder="${esc(ph)}"${dis}>${esc(d[k]||"")}</textarea>`;
+  return `<div class="itabs" role="tablist">${tabs.map(([k,l])=>`<button role="tab" data-t="${k}" aria-selected="${k===t}">${l}</button>`).join("")}</div>
+  <div class="panel" data-p="track" ${t==="track"?"":"hidden"}>
+    <div class="form" data-form="${p.id}">
+      ${f("status","Status",`<select id="f-${p.id}-status" data-k="status"${dis}>${opt(STATUSES,d.status||"To contact")}</select>`)}
+      ${f("shootDay","Shoot day group",`<select id="f-${p.id}-shootDay" data-k="shootDay"${dis}>${["1","2","3","4","5","6","7","8"].map(n=>`<option value="${n}"${n===(d.shootDay||"")?" selected":""}>Day ${n}</option>`).join("")}</select>`)}
+      ${f("filmBy","⏰ Film by",inp("filmBy","date"))}
+      ${f("callDate","Call date",inp("callDate","date"))}
+      ${f("shootDate","Shoot date",inp("shootDate","date"))}
+      ${f("shootTime","Shoot time",inp("shootTime","text","e.g. 07:30 to 10:30"))}
+      ${f("capStatus","CAP link",`<select id="f-${p.id}-capStatus" data-k="capStatus"${dis}>${opt(CAPS,d.capStatus||"Unconfirmed")}</select>`)}
+      ${f("capDetail","CAP detail (measure, year, what it paid for)",ta("capDetail"),true)}
+      ${f("contactPerson","Speak to",inp("contactPerson"))}
+      ${f("phone","Phone",inp("phone"))}
+      ${f("email","Email",inp("email"),true)}
+      ${f("notes","Notes from calls",ta("notes","What they said, quotes worth chasing, access details, location pin"),true)}
+    </div>
+    <div class="saved" id="saved-${p.id}"></div>
+  </div>
+  <div class="panel" data-p="story" ${t==="story"?"":"hidden"}>
+    <h4>In one line</h4><p>${esc(p.one)}</p>
+    <h4>What they produce</h4><ul style="list-style:none;padding-left:0">${CROPS[p.id].map(([e,l])=>`<li><span class="emo">${e}</span> ${esc(l)}</li>`).join("")}</ul>
+    <h4>What we know (fact-checked 28 Oct)</h4><ul>${p.story.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+    <h4>What to highlight (research doc)</h4><p>${esc(p.highlight)}</p>
+    <div class="tags">${p.themes.map(x=>`<span class="tag">${esc(x)}</span>`).join("")}</div>
+  </div>
+  <div class="panel" data-p="imh" ${t==="imh"?"":"hidden"}>
+    <h4>Why this episode matters to them</h4><p>${esc(p.imh)}</p>
+    <h4>The moment we must capture</h4><div class="callout good">${esc(p.must)}</div>
+    <h4>Risk</h4><div class="callout ${/High|No CAP|not documented|isn't documented/.test(p.risk)?"warn":""}">${esc(p.risk)}</div>
+    <h4>CAP objectives this episode covers</h4>
+    <div class="tags">${OBJ.filter(([k])=>p.obj.includes(k)).map(([,l])=>`<span class="tag">${esc(l)}</span>`).join("")}</div>
+  </div>
+  <div class="panel" data-p="call" ${t==="call"?"":"hidden"}>
+    <h4>Confirm on the pre-production call</h4><ol>${p.confirm.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
+    <h4>Also cover</h4><ul><li>The format: 2 to 3 minute film, about 3 hours on site, no scripts, dialect welcome</li><li>Old photos and archive footage</li><li>Drone permission and exact location pin</li><li>Consent and release form</li></ul>
+  </div>
+  <div class="panel" data-p="interview" ${t==="interview"?"":"hidden"}>
+    <div class="tools"><button class="btn" data-copy="${p.id}">Copy questions</button></div>
+    ${p.qs.map(([g,qs])=>`<div class="qgroup">${esc(g)}</div><ol class="q">${qs.map(q=>`<li>${esc(q)}</li>`).join("")}</ol>`).join("")}
+    <p class="small" style="color:var(--muted);font-size:12.5px">Ask them to answer in full sentences that include the question, since there's no narrator. The core questions in the Brief tab work for everyone.</p>
+  </div>
+  <div class="panel" data-p="shoot" ${t==="shoot"?"":"hidden"}>
+    <h4>Season</h4><p>${esc(p.season)}</p>
+    ${ANIMALS[p.id]?`<h4>Animals on site: ${esc(ANIMALS[p.id][0])}</h4><div class="callout">${esc(ANIMALS[p.id][1])}</div>`:""}
+    <h4>B-roll list</h4><ul>${p.broll.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+    <h4>Formats</h4><p>Frame for both 16:9 (YouTube, Facebook) and 9:16 (Instagram, TikTok). Leave clean space for IMH's lower third and end card.</p>
+  </div>`;
+}
+function renderList(){
+  const L=document.getElementById("list");
+  L.innerHTML=P.map(p=>`<article class="row" id="row-${p.id}">
+    <button class="row-head" aria-expanded="false" data-id="${p.id}">
+      <span class="num" id="num-${p.id}">${p.n}</span>
+      <span class="rname"><strong>${esc(p.name)}</strong><small>📍 ${esc(p.place)} · ${esc(p.district)}</small><span class="crops">${CROPS[p.id].map(([e,l])=>`<span><span class="emo">${e}</span> ${esc(l)}</span>`).join("")}</span></span>
+      <span class="chips" id="chips-${p.id}"></span>
+    </button>
+    <div class="row-body" id="body-${p.id}" hidden></div></article>`).join("");
+  L.querySelectorAll(".row-head").forEach(b=>b.addEventListener("click",()=>toggleRow(b.dataset.id)));
+  P.forEach(p=>updateChips(p.id));sortList();
+}
+function todayIso(){const t=new Date();return iso(t.getFullYear(),t.getMonth(),t.getDate())}
+function sortedP(){return [...P].sort((a,b)=>(parseInt(data[a.id].shootDay)||99)-(parseInt(data[b.id].shootDay)||99)||(data[a.id].filmBy||"9").localeCompare(data[b.id].filmBy||"9")||a.n-b.n)}
+function sortList(){const L=document.getElementById("list");const sp=sortedP();sp.forEach((p,i)=>{const r=document.getElementById("row-"+p.id);if(!r)return;L.appendChild(r);
+  const nx=sp[i+1];const sd=data[p.id].shootDay;r.classList.toggle("link-next",!!(nx&&sd&&data[nx.id].shootDay===sd&&data[p.id].status!=="Dropped"&&data[nx.id].status!=="Dropped"));});}
+function updateChips(id){
+  const d=data[id];const st=d.status||"To contact",cap=d.capStatus||"Unconfirmed";
+  const sd=d.shootDate?fmtShort(d.shootDate):(d.shootDay?`Day ${d.shootDay}`:"");
+  document.getElementById("chips-"+id).innerHTML=
+    `<span class="pill ${stCls(id)}"><i class="dot" style="background:${colorVar(stCls(id))}"></i>${esc(st)}</span>`+
+    `<span class="pill ${capCls(id)}">🇪🇺 CAP: ${esc(cap)}</span>`+(ANIMALS[id]?`<span class="pill animal" title="${esc(ANIMALS[id][1])}">${esc(ANIMALS[id][0])}</span>`:"")+(d.filmBy?`<span class="pill ${(!["Filmed","In edit","Delivered","Dropped"].includes(st)&&d.filmBy<todayIso())?"bad":"dayp"}">⏰ Film by ${esc(fmtShort(d.filmBy))}</span>`:"")+(sd?`<span class="pill dayp">🗓️ ${esc(sd)}</span>`:"");
+  document.getElementById("num-"+id).style.background=badgeCol(id);
+}
+function toggleRow(id,fromMap){
+  const was=openId===id;
+  if(openId){const b=document.getElementById("body-"+openId);b.hidden=true;b.innerHTML="";document.getElementById("row-"+openId).classList.remove("open");document.querySelector(`#row-${openId} .row-head`).setAttribute("aria-expanded","false")}
+  openId=was&&!fromMap?null:id;
+  if(openId){const b=document.getElementById("body-"+id);b.innerHTML=rowHTML(byId(id));b.hidden=false;
+    const r=document.getElementById("row-"+id);r.classList.add("open");r.querySelector(".row-head").setAttribute("aria-expanded","true");
+    wireBody(id);if(fromMap)r.scrollIntoView({behavior:"smooth",block:"nearest"});}
+  renderMap();
+}
+function wireBody(id){
+  const b=document.getElementById("body-"+id);
+  b.querySelectorAll(".itabs button").forEach(t=>t.addEventListener("click",()=>{itab[id]=t.dataset.t;
+    b.querySelectorAll(".itabs button").forEach(x=>x.setAttribute("aria-selected",String(x===t)));
+    b.querySelectorAll(".panel").forEach(p=>p.hidden=p.dataset.p!==t.dataset.t);}));
+  b.querySelectorAll("[data-k]").forEach(el=>{
+    const k=el.dataset.k;
+    if(el.tagName==="SELECT"||el.type==="date") el.addEventListener("change",()=>save(id,{[k]:el.value}));
+    else{let tm;el.addEventListener("input",()=>{lastLocal[id+k]=Date.now();clearTimeout(tm);tm=setTimeout(()=>save(id,{[k]:el.value}),700)});
+         el.addEventListener("blur",()=>{clearTimeout(tm);if((data[id][k]||"")!==el.value)save(id,{[k]:el.value})});}
+  });
+  const cb=b.querySelector("[data-copy]");
+  if(cb)cb.addEventListener("click",async()=>{const txt=qText(byId(id));
+    try{await navigator.clipboard.writeText(txt);cb.textContent="Copied";}catch(e){cb.textContent="Copy failed: select the text instead";}
+    setTimeout(()=>cb.textContent="Copy questions",1800);});
+}
+function refreshOpenForm(){
+  if(!openId)return;const d=data[openId];
+  document.querySelectorAll(`#body-${openId} [data-k]`).forEach(el=>{
+    const k=el.dataset.k;if(document.activeElement===el)return;if(Date.now()-(lastLocal[openId+k]||0)<2500)return;
+    const v=d[k]??(k==="status"?"To contact":k==="capStatus"?"Unconfirmed":"");if(el.value!==v)el.value=v;});
+}
+
+// ---------- saving ----------
+function save(id,patch){
+  if(!db||!writable){flash(id,"Read-only here: changes aren't saved.");return Promise.resolve();}
+  Object.keys(patch).forEach(k=>lastLocal[id+k]=Date.now());
+  data[id]={...data[id],...patch,updatedAt:new Date().toISOString()};
+  afterChange(id);
+  flash(id,"Saving…");
+  const body={...data[id]};
+  queues[id]=(queues[id]||Promise.resolve()).then(()=>db.collection("producers").doc(id).set(body))
+    .then(()=>flash(id,"Saved"),e=>{if(e&&e.code==="invalid_argument"){writable=false;showBanner("You can view this tracker but not edit it.");}flash(id,"Not saved: "+(e&&e.message||"try again"));});
+  return queues[id];
+}
+function flash(id,msg){const el=document.getElementById("saved-"+id);if(el)el.textContent=msg;const c=document.getElementById("calSaved");if(c&&curView==="schedule")c.textContent=msg;}
+function afterChange(id){updateChips(id);sortList();renderStats();renderMap();if(curView==="schedule")renderCal();}
+
+// ---------- schedule ----------
+let calY=2026,calM=10,selDate=null; // November 2026 (0-based month)
+const iso=(y,m,d)=>`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+function fmtShort(s){const[y,m,d]=s.split("-").map(Number);return `${d} ${MONTHS[m-1].slice(0,3)}`}
+function eventsOn(ds){const out=[];P.forEach(p=>{const d=data[p.id];
+  if(d.shootDate===ds)out.push({p,kind:"shoot",time:d.shootTime||""});
+  if(d.callDate===ds)out.push({p,kind:"call",time:""});
+  if(d.filmBy===ds&&!d.shootDate)out.push({p,kind:"due",time:""});});return out;}
+function renderCal(){
+  document.getElementById("calTitle").textContent=`${MONTHS[calM]} ${calY}`;
+  const first=new Date(calY,calM,1);const start=(first.getDay()+6)%7;const days=new Date(calY,calM+1,0).getDate();
+  const today=new Date();const tIso=iso(today.getFullYear(),today.getMonth(),today.getDate());
+  let h=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(d=>`<div class="dow">${d}</div>`).join("");
+  const total=Math.ceil((start+days)/7)*7;
+  for(let i=0;i<total;i++){const dt=new Date(calY,calM,1-start+i);const y=dt.getFullYear(),m=dt.getMonth(),d=dt.getDate();const ds=iso(y,m,d);
+    const we=dt.getDay()===0||dt.getDay()===6;const ev=eventsOn(ds);
+    h+=`<button class="day${m!==calM?" out":""}${we?" we":""}${ds===tIso?" today":""}${ds===selDate?" sel":""}" data-d="${ds}" aria-label="${d} ${MONTHS[m]}${ev.length?", "+ev.length+" booked":""}">
+      <span class="dn">${d}</span>${HOLIDAYS[ds]?`<span class="hol">${HOLIDAYS[ds]}</span>`:""}
+      ${ev.map(e=>`<span class="ev ${e.kind}" title="${esc(e.p.name)}">${e.kind==="shoot"?"🎬":e.kind==="due"?"⏰":"📞"} ${e.p.n}<span class="evn"> ${esc(e.p.name)}</span></span>`).join("")}</button>`;}
+  const g=document.getElementById("calGrid");g.innerHTML=h;
+  g.querySelectorAll(".day").forEach(b=>b.addEventListener("click",()=>{selDate=b.dataset.d;renderCal();renderDay();}));
+  renderUnsched();
+}
+function renderDay(){
+  const t=document.getElementById("dayTitle"),f=document.getElementById("dayForm"),hint=document.getElementById("dayHint");
+  if(!selDate){f.hidden=true;hint.hidden=false;return}
+  const[y,m,d]=selDate.split("-").map(Number);const dt=new Date(y,m-1,d);
+  t.textContent=dt.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
+  hint.hidden=true;f.hidden=false;
+  const who=document.getElementById("dfWho");const cur=who.value;
+  who.innerHTML=P.map(p=>`<option value="${p.id}">${p.n} · ${esc(p.name)}</option>`).join("");
+  if(cur)who.value=cur;
+  const we=dt.getDay()===0||dt.getDay()===6;
+  const ev=eventsOn(selDate);
+  document.getElementById("dayEvents").innerHTML=(we?`<p class="small" style="color:var(--s-bad);margin:8px 0 0">Weekend: shoot costs extra.</p>`:"")+
+    (ev.filter(e=>e.kind==="due").length?`<p class="small" style="margin:8px 0 0">⏰ Film-by deadline: ${ev.filter(e=>e.kind==="due").map(e=>esc(e.p.name)).join(", ")}</p>`:"")+(ev.filter(e=>e.kind!=="due").length?`<h4 style="font-size:12px;margin:12px 0 6px;color:var(--muted)">Booked</h4><ul class="unsched">${ev.filter(e=>e.kind!=="due").map(e=>`<li><span>${e.kind==="shoot"?"🎬 Shoot":"📞 Call"} · ${e.p.n} ${esc(e.p.name)}${e.time?" · "+esc(e.time):""}</span> <button class="btn" data-un="${e.p.id}" data-kind="${e.kind}">Remove</button></li>`).join("")}</ul>`:"");
+  document.querySelectorAll("#dayEvents [data-un]").forEach(b=>b.addEventListener("click",async()=>{
+    const id=b.dataset.un;const k=b.dataset.kind==="shoot"?"shootDate":"callDate";const patch={[k]:""};if(k==="shootDate")patch.shootTime="";
+    await save(id,patch);renderCal();renderDay();}));
+  document.getElementById("dfSave").disabled=!writable;
+}
+function renderUnsched(){
+  const u=sortedP().filter(p=>!data[p.id].shootDate&&data[p.id].status!=="Dropped");
+  document.getElementById("unsched").innerHTML=u.length?u.map(p=>`<li><span class="num" style="width:22px;height:22px;font-size:11px;background:${badgeCol(p.id)}">${p.n}</span><span>${esc(p.name)} <span style="color:var(--muted)">· Day ${esc(data[p.id].shootDay||"?")}${data[p.id].filmBy?" · ⏰ by "+fmtShort(data[p.id].filmBy):""}${data[p.id].callDate?" · call "+fmtShort(data[p.id].callDate):""}</span></span></li>`).join(""):`<li class="small">Every shoot has a date.</li>`;
+}
+document.getElementById("prevM").addEventListener("click",()=>{calM--;if(calM<0){calM=11;calY--;}renderCal();});
+document.getElementById("nextM").addEventListener("click",()=>{calM++;if(calM>11){calM=0;calY++;}renderCal();});
+document.getElementById("dfSave").addEventListener("click",async()=>{
+  if(!selDate)return;const id=document.getElementById("dfWho").value,k=document.getElementById("dfWhat").value,tm=document.getElementById("dfTime").value.trim();
+  const patch={[k]:selDate};
+  if(k==="shootDate"){if(tm)patch.shootTime=tm;const s=data[id].status||"To contact";if(["To contact","Contacted","Call booked","Call done"].includes(s))patch.status="Shoot booked";}
+  else{const s=data[id].status||"To contact";if(["To contact","Contacted"].includes(s))patch.status="Call booked";}
+  await save(id,patch);document.getElementById("dfTime").value="";renderCal();renderDay();});
+
+// ---------- brief ----------
+function renderBrief(){
+  const cov=OBJ.map(([k])=>P.filter(p=>p.obj.includes(k)).length);
+  document.getElementById("briefBody").innerHTML=`
+  <div class="box"><h3>Every episode must answer, without narration</h3>
+    <ol><li>Who is the person we're watching?</li><li>What is their relationship with farming or the countryside?</li><li>What personal challenge or change have they faced?</li><li>What solution, practice, partnership or support made a difference, <b>especially the CAP</b>?</li><li>What is the wider message for the future of farming?</li></ol></div>
+  <div class="box"><h3>Tone, and what it isn't</h3>
+    <p><b>Is:</b> human and direct · credible, not bureaucratic · informative, never a lecture · optimistic · clear to a general audience.</p>
+    <p><b>Isn't:</b> a news report · a corporate ad or promo of the person · an institutional presentation full of technical detail · a plain Q&amp;A recording · memorised or over-staged lines.</p></div>
+  <div class="box wide"><h3>Keeping IMH and the Ministry happy</h3>
+    <ul>
+      <li><b>Name the CAP concretely.</b> Every episode needs the producer saying, in their own words, which support they got, what it paid for and what changed. Vague "EU help" won't satisfy the brief. Confirm the measure on the call so they can say it right.</li>
+      <li><b>Get the line that works alone.</b> One sentence per producer that can open a teaser. The Ministry will reuse these.</li>
+      <li><b>Optimism with honesty.</b> Farmers will complain about bureaucracy and payment delays. Let them, since it builds credibility, but in the edit keep it as the obstacle they overcame, not the episode's message.</li>
+      <li><b>Young people and women on screen.</b> Generational renewal and gender equality are headline aims of the new CAP. Gender currently rests on Akaki Grove alone, so put women on camera in other episodes where they're part of the work (family, staff, visitors).</li>
+      <li><b>Cover the whole CAP.</b> The matrix below shows which objectives each episode carries. Use it when pitching the series back to IMH.</li>
+      <li><b>No brand promos.</b> Products can appear, but no hard sell. Most at risk: ALION and Andreou.</li>
+      <li><b>Every figure verified.</b> Measure numbers, amounts, awards and dates are checked before they go on screen or in subtitles.</li>
+      <li><b>Leave room for EU visibility.</b> IMH supplies the opening title, lower thirds and the end card with the co-funding statement. Keep frames clean for them and add no competing logos.</li>
+      <li><b>Flag early.</b> If Andreou or Όρος Μαχαιρά have no real CAP link, tell IMH before booking the shoot so they can decide on a replacement.</li>
+    </ul></div>
+  <div class="box wide"><h3>CAP objectives across the series</h3>
+    <p class="small" style="margin-bottom:8px">The new CAP's specific objectives, plus knowledge and innovation (cross-cutting). Gender equality sits within the rural areas objective but is shown separately because the Commission stresses it.</p>
+    <div class="matrix"><table>
+      <thead><tr><th>Producer</th>${OBJ.map(([,l])=>`<th>${esc(l)}</th>`).join("")}</tr></thead>
+      <tbody>${P.map(p=>`<tr><td>${p.n} · ${esc(p.name)}</td>${OBJ.map(([k])=>p.obj.includes(k)?`<td class="y" aria-label="yes">●</td>`:`<td></td>`).join("")}</tr>`).join("")}</tbody>
+      <tfoot><tr><td>Episodes</td>${cov.map(c=>`<td class="${c<2?"thin":""}">${c}</td>`).join("")}</tr></tfoot>
+    </table></div></div>
+  <div class="box"><h3>Core questions for everyone (Greek)</h3>
+    ${CORE.map(([g,qs])=>`<div class="qgroup">${esc(g)}</div><ol class="q" style="padding-left:20px">${qs.map(q=>`<li>${esc(q)}</li>`).join("")}</ol>`).join("")}</div>
+  <div class="box"><h3>Interview technique</h3>
+    <ul>
+      <li>Ask them to fold the question into the answer ("Γύρισα στο κτήμα γιατί…"), since no interviewer voice is heard.</li>
+      <li>Shoot the interview last, after the b-roll, once they're relaxed and you've seen what to ask about.</li>
+      <li>Ask the CAP question twice, early and late. The second answer is usually cleaner.</li>
+      <li>End every interview with: "Αν είχατε μία φράση για το μέλλον…" That's your teaser line.</li>
+      <li>Cypriot dialect is welcome. The brief wants natural speech, and the subtitles do the rest.</li>
+      <li>Capture room tone and their hands at work. Most films will cut to action while they speak.</li>
+    </ul>
+    <h3 style="margin-top:14px">Deliverables</h3>
+    <ul><li>8 films, 2 to 3 minutes, Greek with English subtitles</li><li>8 teasers, 15 to 20 seconds</li><li>16:9 and 9:16 versions</li><li>IMH supplies all graphics and the 8 articles</li></ul></div>`;
+}
+
+// ---------- views ----------
+let curView="producers";
+function route(){
+  const h=(location.hash||"#producers").slice(1);curView=["producers","schedule","brief"].includes(h)?h:"producers";
+  ["producers","schedule","brief"].forEach(v=>document.getElementById("v-"+v).hidden=v!==curView);
+  document.querySelectorAll("nav.tabs a").forEach(a=>a.setAttribute("aria-current",a.dataset.view===curView?"page":"false"));
+  if(curView==="schedule"){renderCal();renderDay();}
+}
+window.addEventListener("hashchange",route);
+function showBanner(t){const b=document.getElementById("banner");b.textContent=t;b.hidden=false;}
+
+// ---------- boot ----------
+renderStats();renderMap();renderList();renderBrief();route();
+(async()=>{
+  try{db=await window.claude?.use?.("db");}catch(e){db=null}
+  if(!db){Object.keys(SNAPSHOT).forEach(k=>{if(data[k])data[k]={...SNAPSHOT[k]}});P.forEach(p=>updateChips(p.id));sortList();renderStats();renderMap();if(curView==="schedule"){renderCal();renderDay();}
+    if(openId){const b=document.getElementById("body-"+openId);b.innerHTML=rowHTML(byId(openId));wireBody(openId);}
+    showBanner("📸 Read-only snapshot from "+SNAP_WHEN+". Updates are made in the live tracker in Claude.");return;}
+  writable=true;
+  db.collection("producers").onSnapshot(snap=>{
+    snap.docs.forEach(doc=>{if(!data[doc.id])return;const incoming=doc.data()||{};
+      const merged={...incoming};Object.keys(data[doc.id]).forEach(k=>{if(Date.now()-(lastLocal[doc.id+k]||0)<2500)merged[k]=data[doc.id][k];});
+      data[doc.id]=merged;updateChips(doc.id);});
+    sortList();renderStats();renderMap();refreshOpenForm();if(curView==="schedule"){renderCal();renderDay();}
+  },e=>{showBanner("Lost the connection to the tracker. Reload to try again.");});
+  if(openId){const b=document.getElementById("body-"+openId);b.innerHTML=rowHTML(byId(openId));wireBody(openId);}
+})();
+</script>
+
+</body>
+</html>
