@@ -79,7 +79,7 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,te
 .row.link-next::after{content:"";position:absolute;left:26px;top:44px;bottom:-24px;border-left:4px solid var(--accent);border-radius:2px;z-index:0;pointer-events:none}
 .row.link-next + .row .row-head .num{box-shadow:0 0 0 3px var(--accent)}
 .row.link-next .row-head .num{box-shadow:0 0 0 3px var(--accent)}
-.row-head{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:start;padding:12px 14px;cursor:pointer;border-radius:var(--r)}
+.row-head{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px 12px;align-items:start;padding:12px 14px;cursor:pointer;border-radius:var(--r)}
 .num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;color:var(--badge-ink);background:var(--lime);font-variant-numeric:tabular-nums}
 .rname{min-width:0}
 .rname strong{display:block;font-size:15.5px;font-weight:600}
@@ -88,10 +88,11 @@ a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,te
 .crops{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12.5px;color:var(--ink);margin-top:3px}
 .crops span{white-space:nowrap}
 .contact{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:12.5px;color:var(--muted);margin-top:3px}
-.nextstep{display:block;font-size:12.5px;font-weight:600;color:var(--ink);margin-top:3px}
+.nextstep{grid-column:2/-1;display:block;font-size:13px;font-weight:600;color:var(--ink);background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:6px;padding:6px 10px}
 .emo{font-size:15px;line-height:1}
 .row-head .num{grid-row:1 / span 2;margin-top:2px}
-.chips{grid-column:2;justify-content:flex-start!important}
+.chips{grid-column:2/-1;justify-content:flex-start!important}
+.stslot{grid-column:3;grid-row:1}
 .pill{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap;line-height:1.4;display:inline-flex;align-items:center;gap:4px;background:var(--s-todo-bg);color:var(--s-todo)}
 .pill.todo{background:var(--s-todo-bg);color:var(--ink)} .pill.prog{background:var(--s-prog-bg);color:var(--ink)} .pill.book{background:var(--s-book-bg);color:var(--ink)} .pill.done{background:var(--s-done-bg);color:var(--ink)} .pill.bad{background:var(--s-bad-bg);color:var(--ink)}
 .pill .dot{width:7px;height:7px;margin-right:5px;vertical-align:1px}
@@ -574,8 +575,10 @@ function renderList(){
   L.innerHTML=P.map(p=>`<article class="row" id="row-${p.id}">
     <button class="row-head" aria-expanded="false" data-id="${p.id}">
       <span class="num" id="num-${p.id}">${p.n}</span>
-      <span class="rname"><strong>${esc(p.name)}</strong><small>📍 ${esc(p.place)} · ${esc(p.district)}</small><span class="crops">${CROPS[p.id].map(([e,l])=>`<span><span class="emo">${e}</span> ${esc(l)}</span>`).join("")}</span><span class="contact" id="contact-${p.id}"></span><span class="nextstep" id="next-${p.id}" hidden></span></span>
+      <span class="rname"><strong>${esc(p.name)}</strong><small>📍 ${esc(p.place)} · ${esc(p.district)}</small><span class="crops">${CROPS[p.id].map(([e,l])=>`<span><span class="emo">${e}</span> ${esc(l)}</span>`).join("")}</span><span class="contact" id="contact-${p.id}"></span></span>
+      <span class="stslot" id="st-${p.id}"></span>
       <span class="chips" id="chips-${p.id}"></span>
+      <span class="nextstep" id="next-${p.id}" hidden></span>
     </button>
     <div class="row-body" id="body-${p.id}" hidden></div></article>`).join("");
   L.querySelectorAll(".row-head").forEach(b=>b.addEventListener("click",()=>toggleRow(b.dataset.id)));
@@ -587,10 +590,9 @@ function sortList(){const L=document.getElementById("list");const sp=sortedP();s
   const nx=sp[i+1];const sd=data[p.id].shootDay;r.classList.toggle("link-next",!!(nx&&sd&&data[nx.id].shootDay===sd&&data[p.id].status!=="Dropped"&&data[nx.id].status!=="Dropped"));});}
 function updateChips(id){
   const d=data[id];const st=d.status||"To contact",cap=d.capStatus||"Unconfirmed";
-  const sd=d.shootDate?fmtShort(d.shootDate):(d.shootDay?`Day ${d.shootDay}`:"");
+  document.getElementById("st-"+id).innerHTML=`<span class="pill ${stCls(id)}"><i class="dot" style="background:${colorVar(stCls(id))}"></i>${esc(st)}</span>`;
   document.getElementById("chips-"+id).innerHTML=
-    `<span class="pill ${stCls(id)}"><i class="dot" style="background:${colorVar(stCls(id))}"></i>${esc(st)}</span>`+
-    `<span class="pill ${capCls(id)}">🇪🇺 CAP: ${esc(cap)}</span>`+(ANIMALS[id]?`<span class="pill animal" title="${esc(ANIMALS[id][1])}">${esc(ANIMALS[id][0])}</span>`:"")+(d.filmBy?`<span class="pill ${(!["Filmed","In edit","Delivered","Dropped"].includes(st)&&d.filmBy<todayIso())?"bad":"dayp"}">⏰ Film by ${esc(fmtShort(d.filmBy))}</span>`:"")+(sd?`<span class="pill dayp">🗓️ ${esc(sd)}</span>`:"");
+    `<span class="pill ${capCls(id)}">🇪🇺 CAP: ${esc(cap)}</span>`+(ANIMALS[id]?`<span class="pill animal" title="${esc(ANIMALS[id][1])}">${esc(ANIMALS[id][0])}</span>`:"")+(d.filmBy?`<span class="pill ${(!["Filmed","In edit","Delivered","Dropped"].includes(st)&&d.filmBy<todayIso())?"bad":"dayp"}">⏰ Film by ${esc(fmtShort(d.filmBy))}</span>`:"");
   document.getElementById("num-"+id).style.background=badgeCol(id);
   const ct=[d.contactPerson&&"👤 "+esc(d.contactPerson),d.phone&&"📞 "+esc(d.phone)].filter(Boolean);
   const ce=document.getElementById("contact-"+id);ce.innerHTML=ct.map(x=>`<span>${x}</span>`).join("");ce.hidden=!ct.length;
