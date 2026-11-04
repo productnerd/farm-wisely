@@ -464,6 +464,7 @@ const QUICK=[
  ["Finish the sentence: one product I'm keen to grow or make next is…","Συμπληρώστε τη φράση: «Ένα προϊόν που θέλω πολύ να καλλιεργήσω ή να φτιάξω στη συνέχεια είναι…»"]];
 
 const GUESS={p2:["p8","a hive frame covered in bees"],p3:["p7","the biogas digesters"],p4:["p3","the NFT channels, roots in running water"],p6:["p1","the raspberry net houses"],p5:["p6","the packing line"],p1:["p5","the Kot-Kot hens eating school food scraps"],p8:["p4","hands collecting eggs"],p7:["p2","fresh green oil pouring at the mill"]};
+const gameLines=p=>[`🧺 Cyprus basket: they taste what the last farmer put in, react on camera, then add their own product${p.id==="p7"?" (outside the biosecurity zone)":""}`,`🔎 Guess the farm: show them a photo of ${GUESS[p.id][1]} (${byId(GUESS[p.id][0]).name}) and ask «Τι είναι αυτό; Τι κάνει αυτός ο αγρότης;»`];
 const SHOTS=["Their product in the palm of their hand (at Ανδρέου, whatever biosecurity allows)","Old family photos and archive footage: film or photograph them on site"];
 
 // ---------- state ----------
@@ -524,7 +525,7 @@ function renderMap(){
 }
 
 // ---------- list ----------
-function qText(p){return p.qs.map(([g,qs])=>g+"\n"+qs.map((q,i)=>`${i+1}. ${q}`).join("\n")).join("\n\n")+"\n\nΣύντομα βίντεο\n"+QUICK.map(([,q],i)=>`${i+1}. ${q}`).join("\n")}
+function qText(p){return p.qs.map(([g,qs])=>g+"\n"+qs.map((q,i)=>`${i+1}. ${q}`).join("\n")).join("\n\n")+"\n\nΣύντομα βίντεο\n"+QUICK.map(([,q],i)=>`${i+1}. ${q}`).join("\n")+"\n\nGames\n"+gameLines(p).map((x,i)=>`${i+1}. ${x}`).join("\n")}
 function rowHTML(p){
   const t=itab[p.id]||"track";
   const tabs=[["track","✏️ Tracking"],["story","📖 Story"],["imh","🇪🇺 For IMH & the Ministry"],["call","📞 Call"],["interview","🎙️ Interview"],["shoot","🎬 Shoot"]];
@@ -575,13 +576,14 @@ function rowHTML(p){
     <div class="tools"><button class="btn" data-copy="${p.id}">Copy questions</button></div>
     ${p.qs.map(([g,qs])=>`<div class="qgroup">${esc(g)}</div><ol class="q">${qs.map(q=>`<li>${esc(q)}</li>`).join("")}</ol>`).join("")}
     <div class="qgroup">🎬 Σύντομα βίντεο (ίδιες ερωτήσεις σε όλους)</div><ol class="q">${QUICK.map(([,q])=>`<li>${esc(q)}</li>`).join("")}</ol>
+    <div class="qgroup">🎲 Games</div><ul>${gameLines(p).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
     <p class="small" style="color:var(--muted);font-size:12.5px">Ask them to answer in full sentences that include the question, since there's no narrator. The core questions in the Brief tab work for everyone.</p>
   </div>
   <div class="panel" data-p="shoot" ${t==="shoot"?"":"hidden"}>
     <h4>Season</h4><p>${esc(p.season)}</p>
     ${ANIMALS[p.id]?`<h4>Animals on site: ${esc(ANIMALS[p.id][0])}</h4><div class="callout">${esc(ANIMALS[p.id][1])}</div>`:""}
     <h4>B-roll list</h4><ul>${p.broll.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
-    <h4>Shots for every farmer</h4><ul>${SHOTS.map(x=>`<li>${esc(x)}</li>`).join("")}<li>🧺 Cyprus basket: they taste what the last farmer put in, react on camera, then add their own product${p.id==="p7"?" (outside the biosecurity zone)":""}</li><li>🔎 Guess the farm: show them a photo of ${esc(GUESS[p.id][1])} (${esc(byId(GUESS[p.id][0]).name)}) and ask «Τι είναι αυτό; Τι κάνει αυτός ο αγρότης;»</li></ul>
+    <h4>Shots for every farmer</h4><ul>${SHOTS.map(x=>`<li>${esc(x)}</li>`).join("")}${gameLines(p).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
     <h4>Formats</h4><p>Frame for both 16:9 (YouTube, Facebook) and 9:16 (Instagram, TikTok) until IMH confirms the format. Leave clean space for IMH's lower third and end card.</p>
   </div>`;
 }
