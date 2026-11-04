@@ -455,15 +455,15 @@ const CORE=[
 
 const QUICK=[
  ["Finish the sentence: without local farmers, Cypriots would…","Συμπληρώστε τη φράση: «Χωρίς τους ντόπιους αγρότες, οι Κύπριοι θα…»"],
- ["Finish the sentence: one crop or product I love but Cyprus isn't ready for is…","Συμπληρώστε τη φράση: «Μια καλλιέργεια ή ένα προϊόν που αγαπώ, αλλά για το οποίο η Κύπρος δεν είναι ακόμα έτοιμη, είναι…»"],
- ["What did CAP support let you do?","Τι σας επέτρεψε να κάνετε η στήριξη της ΚΑΠ;"],
- ["Show us what you produce, in the palm of your hand","Δείξτε μας αυτό που παράγετε, στην παλάμη του χεριού σας."],
+ ["What CAP support did you get, and what did it let you do?","Ποια στήριξη της ΚΑΠ πήρατε, και τι σας επέτρεψε να κάνετε;"],
  ["Show us the oldest thing on your farm","Δείξτε μας το πιο παλιό πράγμα στο κτήμα σας."],
  ["Teach Cypriot consumers one thing about your product in 15 seconds (how to pick good berries, when to buy them…)","Σε 15 δευτερόλεπτα: πείτε στους Κύπριους καταναλωτές ένα πράγμα για το προϊόν σας (π.χ. πώς να διαλέξουν καλά μούρα ή πότε να τα αγοράσουν)."],
  ["The romantic side of being a farmer, and the not-so-romantic side","Πείτε μας το ρομαντικό κομμάτι του να είσαι αγρότης, και το όχι και τόσο ρομαντικό."],
  ["A myth about your product you'd like to bust","Ποιος είναι ένας μύθος για το προϊόν σας που θέλετε να καταρρίψετε;"],
  ["Teach us a Cypriot farming word you use all the time","Μάθετέ μας μια κυπριακή αγροτική λέξη που χρησιμοποιείτε συνέχεια."],
  ["Finish the sentence: one product I'm keen to grow or make next is…","Συμπληρώστε τη φράση: «Ένα προϊόν που θέλω πολύ να καλλιεργήσω ή να φτιάξω στη συνέχεια είναι…»"]];
+
+const SHOTS=["Their product in the palm of their hand (at Ανδρέου, whatever biosecurity allows)","Old family photos and archive footage: film or photograph them on site"];
 
 // ---------- state ----------
 let db=null, writable=false;
@@ -580,6 +580,7 @@ function rowHTML(p){
     <h4>Season</h4><p>${esc(p.season)}</p>
     ${ANIMALS[p.id]?`<h4>Animals on site: ${esc(ANIMALS[p.id][0])}</h4><div class="callout">${esc(ANIMALS[p.id][1])}</div>`:""}
     <h4>B-roll list</h4><ul>${p.broll.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+    <h4>Shots for every farmer</h4><ul>${SHOTS.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
     <h4>Formats</h4><p>Frame for both 16:9 (YouTube, Facebook) and 9:16 (Instagram, TikTok) until IMH confirms the format. Leave clean space for IMH's lower third and end card.</p>
   </div>`;
 }
@@ -742,7 +743,7 @@ function renderBrief(){
       <tfoot><tr><td>Episodes</td>${cov.map(c=>`<td class="${c<2?"thin":""}">${c}</td>`).join("")}</tr></tfoot>
     </table></div></div>
   <div class="box wide"><h3>🎬 The 8 reels (AIDA style): ask every farmer</h3>
-    <p class="small" style="margin-bottom:8px">One prompt per video, with all eight answers cut together. Same Greek wording and the same framing every time, at the end of each shoot. Adapt "palm of your hand" where it doesn't fit (Ανδρέου). Ask all of them on every shoot, then pick the best 8 prompts in the edit. At 45 seconds, eight answers get about 5 seconds each, so ask for one-line answers and keep only the strongest on the longer prompts.</p>
+    <p class="small" style="margin-bottom:8px">One prompt per video, with all eight answers cut together. Same Greek wording and the same framing every time, at the end of each shoot. Eight prompts, one per reel: ask all of them on every shoot. At 45 seconds, eight answers get about 5 seconds each, so ask for one-line answers and keep only the strongest on the longer prompts.</p>
     <ol>${QUICK.map(([e,q])=>`<li><b>${esc(e)}</b><br><span class="small">${esc(q)}</span></li>`).join("")}</ol></div>
   <div class="box"><h3>Core questions for everyone (Greek)</h3>
     ${CORE.map(([g,qs])=>`<div class="qgroup">${esc(g)}</div><ol class="q" style="padding-left:20px">${qs.map(q=>`<li>${esc(q)}</li>`).join("")}</ol>`).join("")}</div>
