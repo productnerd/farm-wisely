@@ -568,7 +568,7 @@ function rowHTML(p){
   </div>
   <div class="panel" data-p="call" ${t==="call"?"":"hidden"}>
     <h4>Confirm on the pre-production call</h4><ol>${p.confirm.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
-    <h4>Also cover</h4><ul><li>The format: a 3-minute film plus a 45-second reel, about 3 hours on site, no scripts, dialect welcome</li><li>Old photos and archive footage</li><li>Drone permission and exact location pin</li><li>Consent and release form</li></ul>
+    <h4>Also cover</h4><ul><li>The format: a 3-minute film about them, plus short answers for 8 reels shared with the other farmers. About 3 hours on site, no scripts, dialect welcome</li><li>Old photos and archive footage</li><li>Drone permission and exact location pin</li><li>Consent and release form</li></ul>
   </div>
   <div class="panel" data-p="interview" ${t==="interview"?"":"hidden"}>
     <div class="tools"><button class="btn" data-copy="${p.id}">Copy questions</button></div>
@@ -725,7 +725,7 @@ function renderBrief(){
   <div class="box wide"><h3>Keeping IMH and the Ministry happy</h3>
     <ul>
       <li><b>Name the CAP concretely.</b> Every episode needs the producer saying, in their own words, which support they got, what it paid for and what changed. Vague "EU help" won't satisfy the brief. Confirm the measure on the call so they can say it right.</li>
-      <li><b>Get the line that works alone.</b> One sentence per producer that can open their reel. The Ministry will reuse these.</li>
+      <li><b>Get the line that works alone.</b> One sentence per producer that can open their film or a reel. The Ministry will reuse these.</li>
       <li><b>Optimism with honesty.</b> Farmers will complain about bureaucracy and payment delays. Let them, since it builds credibility, but in the edit keep it as the obstacle they overcame, not the episode's message.</li>
       <li><b>Young people and women on screen.</b> Generational renewal and gender equality are headline aims of the new CAP. Gender currently rests on Akaki Grove alone, so put women on camera in other episodes where they're part of the work (family, staff, visitors).</li>
       <li><b>Cover the whole CAP.</b> The matrix below shows which objectives each episode carries. Use it when pitching the series back to IMH.</li>
@@ -741,8 +741,8 @@ function renderBrief(){
       <tbody>${P.map(p=>`<tr><td>${p.n} · ${esc(p.name)}</td>${OBJ.map(([k])=>p.obj.includes(k)?`<td class="y" aria-label="yes">●</td>`:`<td></td>`).join("")}</tr>`).join("")}</tbody>
       <tfoot><tr><td>Episodes</td>${cov.map(c=>`<td class="${c<2?"thin":""}">${c}</td>`).join("")}</tr></tfoot>
     </table></div></div>
-  <div class="box wide"><h3>🎬 Quick videos (AIDA style): ask every farmer</h3>
-    <p class="small" style="margin-bottom:8px">One prompt per video, with all eight answers cut together. Same Greek wording and the same framing every time, at the end of each shoot. Adapt "palm of your hand" where it doesn't fit (Ανδρέου). These are extra to Option A (8 films and 8 reels): agree them with IMH before editing.</p>
+  <div class="box wide"><h3>🎬 The 8 reels (AIDA style): ask every farmer</h3>
+    <p class="small" style="margin-bottom:8px">One prompt per video, with all eight answers cut together. Same Greek wording and the same framing every time, at the end of each shoot. Adapt "palm of your hand" where it doesn't fit (Ανδρέου). Ask all of them on every shoot, then pick the best 8 prompts in the edit. At 45 seconds, eight answers get about 5 seconds each, so ask for one-line answers and keep only the strongest on the longer prompts.</p>
     <ol>${QUICK.map(([e,q])=>`<li><b>${esc(e)}</b><br><span class="small">${esc(q)}</span></li>`).join("")}</ol></div>
   <div class="box"><h3>Core questions for everyone (Greek)</h3>
     ${CORE.map(([g,qs])=>`<div class="qgroup">${esc(g)}</div><ol class="q" style="padding-left:20px">${qs.map(q=>`<li>${esc(q)}</li>`).join("")}</ol>`).join("")}</div>
@@ -751,12 +751,12 @@ function renderBrief(){
       <li>Ask them to fold the question into the answer ("Γύρισα στο κτήμα γιατί…"), since no interviewer voice is heard.</li>
       <li>Shoot the interview last, after the b-roll, once they're relaxed and you've seen what to ask about.</li>
       <li>Ask the CAP question twice, early and late. The second answer is usually cleaner.</li>
-      <li>End every interview with: "Αν είχατε μία φράση για το μέλλον…" That's your reel line.</li>
+      <li>End every interview with: "Αν είχατε μία φράση για το μέλλον…" That's a strong closing line for their film.</li>
       <li>Cypriot dialect is welcome. The brief wants natural speech, and the subtitles do the rest.</li>
       <li>Capture room tone and their hands at work. Most films will cut to action while they speak.</li>
     </ul>
     <h3 style="margin-top:14px">Deliverables</h3>
-    <ul><li>Agreed with IMH: Option A</li><li>8 documentaries, 3 minutes each, Greek with English subtitles</li><li>8 social reels, 45 seconds each, one per farmer</li><li>Filming: 3 hours per farmer, over 6 shoot days</li><li>Formats (16:9, 9:16) aren't in the quote: confirm with IMH, and frame for both until then</li><li>IMH supplies all graphics and the 8 articles</li></ul></div>`;
+    <ul><li>Agreed with IMH: Option A</li><li>8 documentaries, 3 minutes each, Greek with English subtitles</li><li>8 social reels, 45 seconds each, AIDA style: one prompt per reel, answered by all the farmers and cut together</li><li>Filming: 3 hours per farmer, over 6 shoot days</li><li>Formats (16:9, 9:16) aren't in the quote: confirm with IMH, and frame for both until then</li><li>IMH supplies all graphics and the 8 articles</li></ul></div>`;
 }
 
 // ---------- views ----------
