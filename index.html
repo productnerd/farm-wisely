@@ -463,6 +463,7 @@ const QUICK=[
  ["Teach us a Cypriot farming word you use all the time","Μάθετέ μας μια κυπριακή αγροτική λέξη που χρησιμοποιείτε συνέχεια."],
  ["Finish the sentence: one product I'm keen to grow or make next is…","Συμπληρώστε τη φράση: «Ένα προϊόν που θέλω πολύ να καλλιεργήσω ή να φτιάξω στη συνέχεια είναι…»"]];
 
+const GUESS={p2:["p8","a hive frame covered in bees"],p3:["p7","the biogas digesters"],p4:["p3","the NFT channels, roots in running water"],p6:["p1","the raspberry net houses"],p5:["p6","the packing line"],p1:["p5","the Kot-Kot hens eating school food scraps"],p8:["p4","hands collecting eggs"],p7:["p2","fresh green oil pouring at the mill"]};
 const SHOTS=["Their product in the palm of their hand (at Ανδρέου, whatever biosecurity allows)","Old family photos and archive footage: film or photograph them on site"];
 
 // ---------- state ----------
@@ -580,7 +581,7 @@ function rowHTML(p){
     <h4>Season</h4><p>${esc(p.season)}</p>
     ${ANIMALS[p.id]?`<h4>Animals on site: ${esc(ANIMALS[p.id][0])}</h4><div class="callout">${esc(ANIMALS[p.id][1])}</div>`:""}
     <h4>B-roll list</h4><ul>${p.broll.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
-    <h4>Shots for every farmer</h4><ul>${SHOTS.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+    <h4>Shots for every farmer</h4><ul>${SHOTS.map(x=>`<li>${esc(x)}</li>`).join("")}<li>🧺 Cyprus basket: they taste what the last farmer put in, react on camera, then add their own product${p.id==="p7"?" (outside the biosecurity zone)":""}</li><li>🔎 Guess the farm: show them a photo of ${esc(GUESS[p.id][1])} (${esc(byId(GUESS[p.id][0]).name)}) and ask «Τι είναι αυτό; Τι κάνει αυτός ο αγρότης;»</li></ul>
     <h4>Formats</h4><p>Frame for both 16:9 (YouTube, Facebook) and 9:16 (Instagram, TikTok) until IMH confirms the format. Leave clean space for IMH's lower third and end card.</p>
   </div>`;
 }
@@ -745,6 +746,12 @@ function renderBrief(){
   <div class="box wide"><h3>🎬 The 8 reels (AIDA style): ask every farmer</h3>
     <p class="small" style="margin-bottom:8px">One prompt per video, with all eight answers cut together. Same Greek wording and the same framing every time, at the end of each shoot. Eight prompts, one per reel: ask all of them on every shoot. At 45 seconds, eight answers get about 5 seconds each, so ask for one-line answers and keep only the strongest on the longer prompts.</p>
     <ol>${QUICK.map(([e,q])=>`<li><b>${esc(e)}</b><br><span class="small">${esc(q)}</span></li>`).join("")}</ol></div>
+  <div class="box wide"><h3>🎲 Games across all farms</h3>
+    <ul>
+      <li><b>🧺 Cyprus basket.</b> Bring one basket to every shoot. Each farmer tastes what the previous farmer put in, reacts on camera, then adds their own product. The first farmer only adds theirs. Finish on a table with all eight. At Ανδρέου, do it outside the biosecurity zone.</li>
+      <li><b>🔎 Guess the farm.</b> Show each farmer a close-up photo from another farm on your phone and ask «Τι είναι αυτό; Τι κάνει αυτός ο αγρότης;». Have the photo on your phone before the shoot. Each farm's photo is used once:</li>
+    </ul>
+    <ul class="small" style="margin-top:6px">${P.map(p=>`<li>${p.n} ${esc(p.name)} sees ${esc(GUESS[p.id][1])} (${esc(byId(GUESS[p.id][0]).name)})</li>`).join("")}</ul></div>
   <div class="box"><h3>Core questions for everyone (Greek)</h3>
     ${CORE.map(([g,qs])=>`<div class="qgroup">${esc(g)}</div><ol class="q" style="padding-left:20px">${qs.map(q=>`<li>${esc(q)}</li>`).join("")}</ol>`).join("")}</div>
   <div class="box"><h3>Interview technique</h3>
